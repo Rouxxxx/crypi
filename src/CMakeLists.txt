@@ -1,0 +1,3 @@
+add_executable(homomorphic_encryption main.cpp)
+
+target_link_libraries(homomorphic_encryption PRIVATE homomorphic_lib)
