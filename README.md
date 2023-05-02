@@ -11,18 +11,18 @@
 To build:
 
 ```bash
-cmake .
-make
+$ cmake .
+$ make
 ```
 
 To run:
 
 ```bash
-./src/homomorphic_encryption
+$ ./src/homomorphic_encryption
 ```
 
 To clean:
 
 ```bash
-./src/homomorphic_encryption
+$ ./src/homomorphic_encryption
 ```
