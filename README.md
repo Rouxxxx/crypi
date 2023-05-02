@@ -4,7 +4,7 @@
 
 - cmake (Version 3.24 or higher)
 - python3
-- C++
+- C++20
 
 ## Commands
 

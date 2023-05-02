@@ -1,7 +1,8 @@
-#include "../subfolder/subfunc.hh"
-#include <iostream>
+#include "../math/matrix.hh"
+
 int main()
 {
-    std::cout << add(1, 2);
+    Matrix A(10, 0.1);
+    std::cout << A;
     return 0;
 }
