@@ -14,7 +14,10 @@ def delete_path(path: str) -> bool :
 
     return False
 
+# Files created by cmake
 junk_list = ["cmake_install.cmake", "CMakeCache.txt", "CMakeFiles", "Makefile", "e_voting"]
+
+# Compiled files
 extensions_junk = [".o", ".a", ".so"]
 
 def delete_junk(path: str):

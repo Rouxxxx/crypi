@@ -2,6 +2,7 @@
 #include <cstdio>
 #include <fstream>
 
+
 void create_folder_if_not_exists(std::string path) {
     struct stat sb;
     if (stat(path.c_str(), &sb) == 0)
@@ -11,6 +12,9 @@ void create_folder_if_not_exists(std::string path) {
     mkdir(path.c_str(),0777);
 }
 
+/*
+    Save secret key to a specific file 
+*/
 void save_secret_key(SecretKey secret_key, std::string path)
 {
     // Delete file if already exists
@@ -27,6 +31,9 @@ void save_secret_key(SecretKey secret_key, std::string path)
     outfile.close();
 }
 
+/*
+    Load secret key from a specific file 
+*/
 void load_secret_key(SEALContext &context, SecretKey secret_key, std::string path)
 {
     struct stat sb;

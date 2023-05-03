@@ -46,6 +46,7 @@ void Container::init_public_key()
 
 void Container::save_secret()
 {
+    create_folder_if_not_exists(infos_struct.data_folder);
     save_secret(infos_struct.data_folder + "/" + infos_struct.secret_key_file);
 }
 void Container::save_secret(std::string path)
@@ -55,6 +56,7 @@ void Container::save_secret(std::string path)
 
 void Container::load_secret()
 {
+    create_folder_if_not_exists(infos_struct.data_folder);
     load_secret(infos_struct.data_folder + "/" + infos_struct.secret_key_file);
 }
 void Container::load_secret(std::string path)
@@ -99,6 +101,16 @@ Ciphertext Container::sum(Ciphertext encrypted1, Ciphertext encrypted2)
 
     Evaluator evaluator(context);
     evaluator.add(encrypted1, encrypted2, res);
+
+    return res;
+}
+
+Ciphertext Container::multiply(Ciphertext encrypted1, Ciphertext encrypted2)
+{
+    Ciphertext res;
+
+    Evaluator evaluator(context);
+    evaluator.multiply(encrypted1, encrypted2, res);
 
     return res;
 }
