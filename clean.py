@@ -15,12 +15,12 @@ def delete_path(path: str) -> bool :
     return False
 
 junk_list = ["cmake_install.cmake", "CMakeCache.txt", "CMakeFiles", "Makefile", "e_voting"]
-extensions_junk = [".o", ".a"]
+extensions_junk = [".o", ".a", ".so"]
 
 def delete_junk(path: str):
     for file in os.listdir(path):
         full_path = os.path.join(path, file)
-        
+
         if file in junk_list:
             delete_path(full_path)
             continue

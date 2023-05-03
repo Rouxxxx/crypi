@@ -1,0 +1,6 @@
+{
+    "poly_modulus_degree": 4096,
+    "plain_modulus": 1024,
+    "data_folder": "data",
+    "secret_key_file": "secret_key.txt"
+}

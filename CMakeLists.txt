@@ -10,6 +10,9 @@ project(
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
 set(CMAKE_CXX_STANDARD 20)
-add_compile_options(-Wall -Werror -Wextra -Wpedantic)
+add_compile_options(-Wall -Werror -Wextra -Wpedantic -g)
 
+find_package(SEAL REQUIRED)
+
+add_subdirectory(utils)
 add_subdirectory(src)
