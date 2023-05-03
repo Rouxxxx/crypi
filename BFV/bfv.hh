@@ -23,6 +23,8 @@ public:
 
     Ciphertext encrypt(std::string str);
     std::string decrypt(Ciphertext x_encrypted);
+
+    Ciphertext sum(Ciphertext encrypted1, Ciphertext encrypted2);
 private:
     SecretKey secret_key;
     PublicKey public_key;

@@ -26,7 +26,12 @@ int main() {
 
   uint64_t x = 6;
   Ciphertext x_encrypted = container.encrypt(uint64_to_hex_string(x));
-  std::string decrypt = container.decrypt(x_encrypted);
+
+  uint64_t y = 40;
+  Ciphertext y_encrypted = container.encrypt(uint64_to_hex_string(y));
+
+  Ciphertext sum = container.sum(x_encrypted, y_encrypted);
+  std::string decrypt = container.decrypt(sum);
 
   std::cout << "decrypted string: " << decrypt << "\n";
 }

@@ -27,6 +27,14 @@ Container::Container(Infos infos)
     infos_struct = infos;
 }
 
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#            Keys handling
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
 void Container::init_secret_key()
 {
     secret_key = keygen.secret_key();
@@ -55,6 +63,15 @@ void Container::load_secret(std::string path)
 }
 
 
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#             Operations
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+
 Ciphertext Container::encrypt(std::string str)
 {
     Encryptor encryptor(context, public_key);
@@ -74,6 +91,16 @@ std::string Container::decrypt(Ciphertext x_encrypted)
     decryptor.decrypt(x_encrypted, x_decrypted);
 
     return x_decrypted.to_string();
+}
+
+Ciphertext Container::sum(Ciphertext encrypted1, Ciphertext encrypted2)
+{
+    Ciphertext res;
+
+    Evaluator evaluator(context);
+    evaluator.add(encrypted1, encrypted2, res);
+
+    return res;
 }
 
 
