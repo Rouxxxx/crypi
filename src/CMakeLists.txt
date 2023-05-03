@@ -1,3 +1,4 @@
-add_executable(homomorphic_encryption main.cpp)
+add_executable(e_voting main.cpp)
 
-target_link_libraries(homomorphic_encryption PRIVATE homomorphic_lib)
+find_package(SEAL 4.1 REQUIRED)
+target_link_libraries(e_voting SEAL::seal)

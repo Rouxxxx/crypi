@@ -5,6 +5,7 @@
 - cmake (Version 3.24 or higher)
 - python3
 - C++20
+- (SEAL) [https://github.com/microsoft/SEAL]
 
 ## Commands
 
@@ -18,11 +19,11 @@ $ make
 To run:
 
 ```bash
-$ ./src/homomorphic_encryption
+$ ./src/e_voting
 ```
 
 To clean:
 
 ```bash
-$ ./src/homomorphic_encryption
+$ python3 clean.py
 ```

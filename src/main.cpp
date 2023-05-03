@@ -1,36 +1,140 @@
-#include "../math/math.hh"
-#include <cstdlib>
+#include <iostream>
+#include "seal/seal.h"
+
+using namespace seal;
+
+std::string uint64_to_hex_string(std::uint64_t value)
+{
+    return util::uint_to_hex_string(&value, std::size_t(1));
+}
+
+void print_parameters(const SEALContext &context)
+{
+    auto &context_data = *context.key_context_data();
+
+    /*
+    Which scheme are we using?
+    */
+    std::string scheme_name;
+    switch (context_data.parms().scheme())
+    {
+    case seal::scheme_type::bfv:
+        scheme_name = "BFV";
+        break;
+    case seal::scheme_type::ckks:
+        scheme_name = "CKKS";
+        break;
+    case seal::scheme_type::bgv:
+        scheme_name = "BGV";
+        break;
+    default:
+        throw std::invalid_argument("unsupported scheme");
+    }
+    std::cout << "/" << std::endl;
+    std::cout << "| Encryption parameters :" << std::endl;
+    std::cout << "|   scheme: " << scheme_name << std::endl;
+    std::cout << "|   poly_modulus_degree: " << context_data.parms().poly_modulus_degree() << std::endl;
+
+    /*
+    Print the size of the true (product) coefficient modulus.
+    */
+    std::cout << "|   coeff_modulus size: ";
+    std::cout << context_data.total_coeff_modulus_bit_count() << " (";
+    auto coeff_modulus = context_data.parms().coeff_modulus();
+    std::size_t coeff_modulus_size = coeff_modulus.size();
+    for (std::size_t i = 0; i < coeff_modulus_size - 1; i++)
+    {
+        std::cout << coeff_modulus[i].bit_count() << " + ";
+    }
+    std::cout << coeff_modulus.back().bit_count();
+    std::cout << ") bits" << std::endl;
+
+    /*
+    For the BFV scheme print the plain_modulus parameter.
+    */
+    if (context_data.parms().scheme() == seal::scheme_type::bfv)
+    {
+        std::cout << "|   plain_modulus: " << context_data.parms().plain_modulus().value() << std::endl;
+    }
+
+    std::cout << "\\" << std::endl;
+}
+
 
 int main()
 {
-    // Matrix dimension : large enough to make it hard to solve, 
-    // but small enough to be able to compute it
-    int n = 256;
+    EncryptionParameters parms(scheme_type::bfv);
+
+    size_t poly_modulus_degree = 4096;
+    parms.set_poly_modulus_degree(poly_modulus_degree);
+
+    parms.set_coeff_modulus(CoeffModulus::BFVDefault(poly_modulus_degree));
+
+    parms.set_plain_modulus(1024);
+
+    /*
+    Now that all parameters are set, we are ready to construct a SEALContext
+    object. This is a heavy class that checks the validity and properties of the
+    parameters we just set.
+    */
+    SEALContext context(parms);
+
+    /*
+    Print the parameters that we have chosen.
+    */
+    std::cout << "==================================\n";
+    std::cout << "Set encryption parameters and print" << std::endl;
+    print_parameters(context);
 
 
-    // modulus of the sheme : same considerations as with n
-    // k has to be a multiple of 8
-    int k = 256;
-    int q = pow(2, k) + 1;
-
-    std::cout << "Computing A...";
-    Matrix A(n, 3.2);
-    std::cout << "A computed !\n";
+    KeyGenerator keygen(context);
+    SecretKey secret_key = keygen.secret_key();
+    PublicKey public_key;
+    keygen.create_public_key(public_key);
 
 
-    std::cout << "Computing s...";
-    Random_vector s(n, -k, k);
-    std::cout << "s computed !\n";
+    Encryptor encryptor(context, public_key);
 
-    // Generate identity matrix of size n w n
-    Matrix basis(n);
-    for (int i = 0; i < n; i++) {
-        basis.set_val(1, i, i);
-    }
+    Evaluator evaluator(context);
 
-    std::cout << "Computing projection...";
-    std::vector<int> new_s = s.project_onto_basis(basis);
-    std::cout << "projection computed !\n";
+    Decryptor decryptor(context, secret_key);
 
-    return 0;
+    std::cout << "==================================\n";
+    uint64_t x = 6;
+    Plaintext x_plain(uint64_to_hex_string(x));
+    std::cout << "Express x = " + std::to_string(x) + " as a plaintext polynomial 0x" + x_plain.to_string() + "." << std::endl;
+
+    /*
+    We then encrypt the plaintext, producing a ciphertext..
+    */
+    std::cout << "==================================\n";
+    Ciphertext x_encrypted;
+    std::cout << "Encrypt x_plain to x_encrypted." << std::endl;
+    encryptor.encrypt(x_plain, x_encrypted);
+
+    /*
+    In Microsoft SEAL, a valid ciphertext consists of two or more polynomials
+    whose coefficients are integers modulo the product of the primes in the
+    coeff_modulus. The number of polynomials in a ciphertext is called its `size'
+    and is given by Ciphertext::size(). A freshly encrypted ciphertext always
+    has size 2.
+    */
+    std::cout << "    + size of freshly encrypted x: " << x_encrypted.size() << std::endl;
+
+    /*
+    There is plenty of noise budget left in this freshly encrypted ciphertext.
+    */
+    std::cout << "    + noise budget in freshly encrypted x: " << decryptor.invariant_noise_budget(x_encrypted) << " bits"
+         << std::endl;
+
+    /*
+    We decrypt the ciphertext and print the resulting plaintext in order to
+    demonstrate correctness of the encryption.
+    */
+    Plaintext x_decrypted;
+    std::cout << "    + decryption of x_encrypted: ";
+    decryptor.decrypt(x_encrypted, x_decrypted);
+    std::cout << "0x" << x_decrypted.to_string() << " ...... Correct." << std::endl;
+    
+    std::cout << "encrypted value: " << std::to_string(x) << "\ndecrypted value: " << x_decrypted.to_string() << "\n";
 }
