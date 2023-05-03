@@ -1,57 +1,122 @@
 #include "seal/seal.h"
 #include "../utils/utils.hh"
+#include <string>
+#include <vector>
 #include "../BFV/bfv.hh"
 #include <iostream>
 
 using namespace seal;
 
-std::string uint64_to_hex_string(std::uint64_t value) {
-  return util::uint_to_hex_string(&value, std::size_t(1));
+std::string uint64_to_hex_string(std::uint64_t value) 
+{
+    return util::uint_to_hex_string(&value, std::size_t(1));
 }
 
+void simple_example(Container* container) {
+    // Test of the save / import feature
+    container->save_secret();
+    container->load_secret();
+
+
+    // Init two values and encrypt them
+    uint64_t x = 6;
+    std::string x1 = uint64_to_hex_string(x);
+    Ciphertext x_encrypted = container->encrypt(x1);
+
+    uint64_t y = 40;
+    std::string y1 = uint64_to_hex_string(y);
+    Ciphertext y_encrypted = container->encrypt(y1);
+
+
+    // Compute the sum / multiplication
+    Ciphertext sum = container->sum(x_encrypted, y_encrypted);
+    Plaintext sum_decrypted = container->decrypt(sum);
+
+    Ciphertext mult = container->multiply(x_encrypted, y_encrypted);
+    Plaintext mult_decrypted = container->decrypt(mult);
+
+    uint64_t s = x + y;
+    uint64_t m = x * y;
+
+    // Print to see if everything's right
+    std::cout << "x:" << x1 << ", y:" << y1 << "\n";
+    std::cout << "addition: " << uint64_to_hex_string(s) << ", decrypted addition: " << sum_decrypted.to_string() << "\n";
+    std::cout << "multiplication: " << uint64_to_hex_string(m) << ", decrypted multiplication: " << mult_decrypted.to_string() << "\n";
+}
+
+std::vector<uint64_t> generate_random_vector(int n)
+{
+    std::vector<uint64_t> vote(n, 0);
+    // Set a random position in the vector to 1
+    uint64_t rand_pos = rand() % n;
+    vote[rand_pos] = 1;
+    return vote;
+}
+
+void print_vector(std::vector<uint64_t> vec, int size)
+{
+    int s = vec.size();
+    if (s == 0)
+        return;
+    std::cout << vec[0];
+    for (int i = 1; i < size && i < s; i++)
+    {
+        std::cout << " " << vec[i];
+    }
+    std::cout << std::endl;
+}
+
+// Simulate a list of votes
+void vote_example(Container* container, int nb_candidates, int nb_votes) {
+    srand(time(NULL));
+    std::vector<std::vector<uint64_t>> votes(nb_votes);
+    Ciphertext cipher;
+
+    // Compute random votes, and add them to the Ciphertext
+    for (int i = 0; i < nb_votes; i++)
+    {
+        // Decrypt then decode the vector (vector -> plaintext -> encrypted plaintext)
+        votes[i] = generate_random_vector(nb_candidates);
+        Plaintext txt = container->encode_vector(votes[i]);
+        Ciphertext tmp_cipher = container->encrypt(txt);
+
+        // homomorphic addition
+        if (i == 0)
+            cipher = tmp_cipher;
+        else
+            cipher = container->sum(cipher, tmp_cipher);
+    }
+
+    // Decrypt then decode the vector (encrypted plaintext -> decrypted plaintext -> vector)
+    Plaintext decrypted = container->decrypt(cipher);
+    std::vector<uint64_t> result = container->decode_vector(decrypted);
+
+    // Printing results
+    std::cout << "\nVotes:\n";
+    for (int i = 0; i < nb_votes; i++)
+    {
+        print_vector(votes[i], nb_candidates);
+    }
+
+    std::cout << "\nResult:\n";
+    print_vector(result, nb_candidates);
+}
+
+
 int main() {
-  Infos infos_obj;
+    Infos infos_obj;
 
-  // Load infos from JSON
-  infos_obj.build_static_info("src/config.json");
-  
-  Container container(infos_obj);
+    // Load infos from JSON
+    infos_obj.build_static_info("src/config.json");
 
-  // Pretty Print
-  container.print_parameters();
+    Container container(infos_obj);
 
-  // Init BGV keys
-  container.init_public_key();
-  container.init_secret_key();
+    // Pretty Print
+    container.print_parameters();
 
-  // Test of the save / import feature
-  container.save_secret();
-  container.load_secret();
+    // Init BGV keys
+    container.init_public_key();
+    container.init_secret_key();
 
-
-  // Init two values and encrypt them
-  uint64_t x = 6;
-  std::string x1 = uint64_to_hex_string(x);
-  Ciphertext x_encrypted = container.encrypt(x1);
-
-  uint64_t y = 40;
-  std::string y1 = uint64_to_hex_string(y);
-  Ciphertext y_encrypted = container.encrypt(y1);
-
-
-  // Compute the sum / multiplication
-  Ciphertext sum = container.sum(x_encrypted, y_encrypted);
-  std::string sum_decrypted = container.decrypt(sum);
-
-  Ciphertext mult = container.multiply(x_encrypted, y_encrypted);
-  std::string mult_decrypted = container.decrypt(mult);
-
-  uint64_t s = x + y;
-  uint64_t m = x * y;
-
-
-  // Print to see if everything's right
-  std::cout << "x:" << x1 << ", y:" << y1 << "\n";
-  std::cout << "addition: " << uint64_to_hex_string(s) << ", decrypted addition: " << sum_decrypted << "\n";
-  std::cout << "multiplication: " << uint64_to_hex_string(m) << ", decrypted multiplication: " << mult_decrypted << "\n";
+    vote_example(&container, 5, 10);
 }

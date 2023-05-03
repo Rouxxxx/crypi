@@ -3,6 +3,7 @@
 
 #include "../utils/utils.hh"
 #include "seal/seal.h"
+#include <vector>
 
 using namespace seal;
 
@@ -21,11 +22,16 @@ public:
 
     void print_parameters();
 
+    Ciphertext encrypt(Plaintext plain);
     Ciphertext encrypt(std::string str);
-    std::string decrypt(Ciphertext x_encrypted);
+
+    Plaintext decrypt(Ciphertext x_encrypted);
 
     Ciphertext sum(Ciphertext encrypted1, Ciphertext encrypted2);
     Ciphertext multiply(Ciphertext encrypted1, Ciphertext encrypted2);
+
+    Plaintext encode_vector(std::vector<uint64_t> vote);
+    std::vector<uint64_t> decode_vector(Plaintext vector_decrypted);
 private:
     SecretKey secret_key;
     PublicKey public_key;

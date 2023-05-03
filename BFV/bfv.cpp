@@ -1,4 +1,5 @@
 #include "bfv.hh"
+#include <cstdlib>
 
 /*
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -15,7 +16,9 @@ SEALContext set_context(Infos infos)
     EncryptionParameters parms(scheme_type::bfv);
     parms.set_poly_modulus_degree(infos.poly_modulus_degree);
     parms.set_coeff_modulus(CoeffModulus::BFVDefault(infos.poly_modulus_degree));
-    parms.set_plain_modulus(infos.plain_modulus);
+    //parms.set_plain_modulus(infos.plain_modulus);
+    parms.set_plain_modulus(PlainModulus::Batching(infos.poly_modulus_degree, 20)); // Batching enabled
+
 
     return SEALContext(parms);
 }
@@ -73,26 +76,27 @@ void Container::load_secret(std::string path)
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
 
-
-Ciphertext Container::encrypt(std::string str)
+Ciphertext Container::encrypt(Plaintext plain)
 {
     Encryptor encryptor(context, public_key);
-    Plaintext x_plain(str);
+    Ciphertext encrypted;
+    encryptor.encrypt(plain, encrypted);
 
-    Ciphertext x_encrypted;
-    encryptor.encrypt(x_plain, x_encrypted);
-
-    return x_encrypted;
+    return encrypted;
+}
+Ciphertext Container::encrypt(std::string str)
+{
+    return encrypt(Plaintext(str));
 }
 
-std::string Container::decrypt(Ciphertext x_encrypted)
+Plaintext Container::decrypt(Ciphertext x_encrypted)
 {
     Plaintext x_decrypted;
 
     Decryptor decryptor(context, secret_key);
     decryptor.decrypt(x_encrypted, x_decrypted);
-
-    return x_decrypted.to_string();
+    
+    return x_decrypted;
 }
 
 Ciphertext Container::sum(Ciphertext encrypted1, Ciphertext encrypted2)
@@ -115,6 +119,24 @@ Ciphertext Container::multiply(Ciphertext encrypted1, Ciphertext encrypted2)
     return res;
 }
 
+Plaintext Container::encode_vector(std::vector<uint64_t> vote)
+{
+    BatchEncoder batch_encoder(context);
+    Plaintext vote_plain;
+    batch_encoder.encode(vote, vote_plain);
+    return vote_plain;
+}
+std::vector<uint64_t> Container::decode_vector(Plaintext vector_decrypted)
+{
+    BatchEncoder batch_encoder(context);
+    std::vector<uint64_t> tally;
+    batch_encoder.decode(vector_decrypted, tally);
+
+    return tally;
+}
+
+
+
 
 
 
@@ -126,7 +148,8 @@ Ciphertext Container::multiply(Ciphertext encrypted1, Ciphertext encrypted2)
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
 
-void Container::print_parameters() {
+void Container::print_parameters() 
+{
   auto &context_data = *context.key_context_data();
 
   std::cout << "/" << std::endl;

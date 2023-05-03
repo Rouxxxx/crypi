@@ -3,7 +3,8 @@
 #include <fstream>
 
 
-void create_folder_if_not_exists(std::string path) {
+void create_folder_if_not_exists(std::string path) 
+{
     struct stat sb;
     if (stat(path.c_str(), &sb) == 0)
         return;
