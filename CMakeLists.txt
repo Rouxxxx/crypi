@@ -15,4 +15,5 @@ add_compile_options(-Wall -Werror -Wextra -Wpedantic -g)
 find_package(SEAL REQUIRED)
 
 add_subdirectory(utils)
+add_subdirectory(BFV)
 add_subdirectory(src)

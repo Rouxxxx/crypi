@@ -1,3 +1,6 @@
+#ifndef BASICS_HH
+#define BASICS_HH
+
 #include <stddef.h>
 #include <cstdint>
 #include <string>
@@ -23,3 +26,5 @@ public :
         secret_key_file = data.value("secret_key_file", ".");
    }
 };
+
+#endif
