@@ -8,6 +8,16 @@
 
 #include "nlohmann_json.hpp"
 
+inline int hex_to_int(std::string hexString)
+{
+    int intValue;
+    std::stringstream ss;
+    ss << std::hex << hexString;
+    ss >> intValue;
+
+    return intValue;
+}
+
 
 class Infos {
 public :

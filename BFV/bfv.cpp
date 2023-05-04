@@ -135,9 +135,12 @@ std::vector<uint64_t> Container::decode_vector(Plaintext vector_decrypted)
     return tally;
 }
 
-
-
-
+Ciphertext encrypt_number(Container* container, std::uint64_t value)
+{
+    std::string value1 = uint64_to_hex_string(value);
+    Ciphertext value_encrypted = container->encrypt(value1);
+    return value_encrypted;
+}
 
 
 /*
@@ -147,6 +150,12 @@ std::vector<uint64_t> Container::decode_vector(Plaintext vector_decrypted)
 #
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
+
+std::string uint64_to_hex_string(std::uint64_t value) 
+{
+    return util::uint_to_hex_string(&value, std::size_t(1));
+}
+
 
 void Container::print_parameters() 
 {

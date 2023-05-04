@@ -4,6 +4,7 @@
 #include "../utils/utils.hh"
 #include "seal/seal.h"
 #include <vector>
+#include <sstream>
 
 using namespace seal;
 
@@ -40,7 +41,10 @@ private:
     Infos infos_struct;
 };
 
+std::string uint64_to_hex_string(std::uint64_t value);
 Container build_context(Infos infos);
 void print_parameters(const SEALContext &context);
+Ciphertext encrypt_number(Container* container, std::uint64_t value);
+int hex_to_int(std::string hexString);
 
 #endif

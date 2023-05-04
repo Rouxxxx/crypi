@@ -7,10 +7,16 @@
 
 using namespace seal;
 
-std::string uint64_to_hex_string(std::uint64_t value) 
-{
-    return util::uint_to_hex_string(&value, std::size_t(1));
-}
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#            Simple example
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+
+
 
 void simple_example(Container* container) {
     // Test of the save / import feature
@@ -44,6 +50,16 @@ void simple_example(Container* container) {
     std::cout << "multiplication: " << uint64_to_hex_string(m) << ", decrypted multiplication: " << mult_decrypted.to_string() << "\n";
 }
 
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#            Real life example
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+
 std::vector<uint64_t> generate_random_vector(int n)
 {
     std::vector<uint64_t> vote(n, 0);
@@ -67,31 +83,50 @@ void print_vector(std::vector<uint64_t> vec, int size)
 }
 
 // Simulate a list of votes
+// Loop and generate n random votes for x candidates
+// We keep track of the list of votes in a vector, so we can check if the result is accurate
 void vote_example(Container* container, int nb_candidates, int nb_votes) {
+    // Seed so the random is efficient
     srand(time(NULL));
+
+    // Create all useful vars 
     std::vector<std::vector<uint64_t>> votes(nb_votes);
     Ciphertext cipher;
+    Ciphertext nb_votes_cipher;
 
     // Compute random votes, and add them to the Ciphertext
     for (int i = 0; i < nb_votes; i++)
     {
-        // Decrypt then decode the vector (vector -> plaintext -> encrypted plaintext)
+        // Encrypt then encode the vector (vector -> plaintext -> encrypted plaintext)
         votes[i] = generate_random_vector(nb_candidates);
         Plaintext txt = container->encode_vector(votes[i]);
         Ciphertext tmp_cipher = container->encrypt(txt);
 
-        // homomorphic addition
-        if (i == 0)
+        // Encode the nb which will be added to the counter
+        Ciphertext tmp_nb_votes = encrypt_number(container, 1);
+
+        // Homomorphic addition
+        // Add the vector AND the nb of votes
+        if (i == 0){
             cipher = tmp_cipher;
-        else
+            nb_votes_cipher = tmp_nb_votes;
+        }
+        else {
             cipher = container->sum(cipher, tmp_cipher);
+            nb_votes_cipher = container->sum(nb_votes_cipher, tmp_nb_votes);
+        }
     }
+
+    // Decrypt the number of votes
+    Plaintext nb_votes_decrypted = container->decrypt(nb_votes_cipher);
 
     // Decrypt then decode the vector (encrypted plaintext -> decrypted plaintext -> vector)
     Plaintext decrypted = container->decrypt(cipher);
     std::vector<uint64_t> result = container->decode_vector(decrypted);
 
     // Printing results
+    std::cout << "Nb votes: " << hex_to_int(nb_votes_decrypted.to_string()) << std::endl;
+
     std::cout << "\nVotes:\n";
     for (int i = 0; i < nb_votes; i++)
     {
@@ -118,5 +153,5 @@ int main() {
     container.init_public_key();
     container.init_secret_key();
 
-    vote_example(&container, 5, 10);
+    vote_example(&container, 5, 15);
 }
