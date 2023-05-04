@@ -5,7 +5,7 @@
 - cmake (Version 3.24 or higher)
 - python3
 - C++20
-- (SEAL) [https://github.com/microsoft/SEAL]
+- [SEAL](https://github.com/microsoft/SEAL)
 
 ## Commands
 
