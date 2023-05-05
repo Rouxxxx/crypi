@@ -1,8 +1,8 @@
 #include "seal/seal.h"
-#include "../utils/utils.hh"
+#include "./utils/utils.hh"
 #include <string>
 #include <vector>
-#include "../BFV/bfv.hh"
+#include "./BFV/bfv.hh"
 #include <iostream>
 
 using namespace seal;
@@ -137,7 +137,6 @@ void vote_example(Container* container, int nb_candidates, int nb_votes) {
     print_vector(result, nb_candidates);
 }
 
-/*
 int main() {
     Infos infos_obj;
 
@@ -155,4 +154,3 @@ int main() {
 
     vote_example(&container, 5, 15);
 }
-*/
