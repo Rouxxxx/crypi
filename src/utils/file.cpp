@@ -1,20 +1,20 @@
 #include "file.hh"
+
 #include <cstdio>
 #include <fstream>
 
-
-void create_folder_if_not_exists(std::string path) 
+void create_folder_if_not_exists(std::string path)
 {
     struct stat sb;
     if (stat(path.c_str(), &sb) == 0)
         return;
 
     std::cout << path << " folder doesn't exist. Creating.\n";
-    mkdir(path.c_str(),0777);
+    mkdir(path.c_str(), 0777);
 }
 
 /*
-    Save secret key to a specific file 
+    Save secret key to a specific file
 */
 void save_secret_key(SecretKey secret_key, std::string path)
 {
@@ -33,14 +33,15 @@ void save_secret_key(SecretKey secret_key, std::string path)
 }
 
 /*
-    Load secret key from a specific file 
+    Load secret key from a specific file
 */
-void load_secret_key(SEALContext &context, SecretKey secret_key, std::string path)
+void load_secret_key(SEALContext& context, SecretKey secret_key,
+                     std::string path)
 {
     struct stat sb;
     if (stat(path.c_str(), &sb) != 0)
         return;
-    
+
     std::ifstream infile(path.c_str());
 
     std::cout << "Importing secret key...";

@@ -1,10 +1,11 @@
 #ifndef BFV_HH
 #define BFV_HH
 
+#include <sstream>
+#include <vector>
+
 #include "../utils/utils.hh"
 #include "seal/seal.h"
-#include <vector>
-#include <sstream>
 
 using namespace seal;
 
@@ -33,6 +34,7 @@ public:
 
     Plaintext encode_vector(std::vector<uint64_t> vote);
     std::vector<uint64_t> decode_vector(Plaintext vector_decrypted);
+
 private:
     SecretKey secret_key;
     PublicKey public_key;
@@ -43,7 +45,7 @@ private:
 
 std::string uint64_to_hex_string(std::uint64_t value);
 Container build_context(Infos infos);
-void print_parameters(const SEALContext &context);
+void print_parameters(const SEALContext& context);
 Ciphertext encrypt_number(Container* container, std::uint64_t value);
 int hex_to_int(std::string hexString);
 
