@@ -19,7 +19,7 @@ $ make
 To run:
 
 ```bash
-$ ./src/e_voting
+$ ./src/e_voting --docroot . --http-address 0.0.0.0 --http-port 9090
 ```
 
 To clean:

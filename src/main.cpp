@@ -137,7 +137,7 @@ void vote_example(Container* container, int nb_candidates, int nb_votes) {
     print_vector(result, nb_candidates);
 }
 
-
+/*
 int main() {
     Infos infos_obj;
 
@@ -155,3 +155,4 @@ int main() {
 
     vote_example(&container, 5, 15);
 }
+*/
