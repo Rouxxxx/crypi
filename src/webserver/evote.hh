@@ -22,6 +22,8 @@ private:
     Wt::WLineEdit* socialSecurityNumberEdit_;
     Wt::WLineEdit* passwordEdit_;
     Wt::WText* connectionError_;
+    Wt::WText* nb_votes_;
+    Wt::WText* winner_;
     Container* container;
 };
 

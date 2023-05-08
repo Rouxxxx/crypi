@@ -41,6 +41,7 @@ bool check_social_number(const Wt::WString num_secu)
 
 bool check_credentials(const Wt::WString username, const Wt::WString password)
 {
+    // return true;
     // Calculate hash
     std::string hash = calculate_hash(username.toUTF8(), password.toUTF8());
 
@@ -141,7 +142,7 @@ void vote(std::string name, std::vector<std::string> candidates, Container *cont
 
 bool has_voted(const Wt::WString social_security_password, const Wt::WString password)
 {
-    //return false;
+    // return false;
     // Calculate hash
     std::string hash = calculate_hash(social_security_password.toUTF8(), password.toUTF8());
 

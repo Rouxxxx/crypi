@@ -18,6 +18,24 @@ inline int hex_to_int(std::string hexString)
     return intValue;
 }
 
+inline int find_max(std::vector<uint64_t> table)
+{
+    if (table.size() == 0)
+        return -1;
+
+    uint64_t max = table[0];
+    int id_max = 0;
+
+    for (size_t id = 1; id < table.size(); id++) {
+        if (table[id] > max) {
+            max = table[id];
+            id_max = id;
+        }
+    }
+
+    return id_max;
+}
+
 class Infos
 {
 public:
