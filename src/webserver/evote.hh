@@ -1,5 +1,5 @@
-#ifndef LOGIN_HH
-#define LOGIN_HH
+#ifndef EVOTE_HH
+#define EVOTE_HH
 
 #include <Wt/WApplication.h>
 #include <Wt/WBreak.h>
@@ -8,11 +8,14 @@
 #include <Wt/WPushButton.h>
 #include <Wt/WText.h>
 
-class LoginApplication : public Wt::WApplication
+#include "tools.hh"
+
+class EvoteApplication : public Wt::WApplication
 {
 public:
-    LoginApplication(const Wt::WEnvironment& env);
+    EvoteApplication(const Wt::WEnvironment& env);
     void add_newlines(size_t n);
+    void VotePage();
 
 private:
     Wt::WLineEdit* usernameEdit_;
@@ -22,4 +25,4 @@ private:
 
 bool check_credentials(const Wt::WString username, const Wt::WString password);
 
-#endif /* ! LOGIN_HH */
+#endif /* ! EVOTE_HH */

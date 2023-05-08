@@ -1,6 +1,8 @@
 add_library(web_server SHARED
-    login.cpp
-    login.hh
+    evote.cpp
+    evote.hh
+    tools.cpp
+    tools.hh
 )
 
 target_link_libraries(web_server PRIVATE wt wthttp)

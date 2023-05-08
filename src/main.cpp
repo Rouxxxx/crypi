@@ -5,7 +5,7 @@
 #include "BFV/bfv.hh"
 #include "seal/seal.h"
 #include "utils/utils.hh"
-#include "webserver/login.hh"
+#include "webserver/evote.hh"
 
 using namespace seal;
 
@@ -162,6 +162,6 @@ int main(int argc, char** argv)
     vote_example(&container, 5, 15);
 
     return Wt::WRun(argc, argv, [](const Wt::WEnvironment& env) {
-        return std::make_unique<LoginApplication>(env);
+        return std::make_unique<EvoteApplication>(env);
     });
 }

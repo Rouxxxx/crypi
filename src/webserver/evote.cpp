@@ -1,4 +1,4 @@
-#include "login.hh"
+#include "evote.hh"
 
 bool check_credentials(const Wt::WString username, const Wt::WString password)
 {
@@ -6,26 +6,45 @@ bool check_credentials(const Wt::WString username, const Wt::WString password)
     return username == "root" && password == "root";
 }
 
-void LoginApplication::add_newlines(size_t n)
+void EvoteApplication::add_newlines(size_t n)
 {
     for (size_t i = 0; i < n; i++)
         // Newline
         root()->addWidget(std::make_unique<Wt::WBreak>());
 }
 
-LoginApplication::LoginApplication(const Wt::WEnvironment& env)
+void EvoteApplication::VotePage()
+{
+    root()->clear();
+    setTitle("Vote");
+    std::vector<std::string> v = get_candidates("data/candidates.txt");
+
+    auto call_vote = [this](const std::string& candidate) { vote(candidate); };
+
+    // Buttons
+    for (size_t i = 0; i < v.size(); i++)
+    {
+        std::string candidate = v[i];
+        Wt::WPushButton* button =
+            root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
+        button->clicked().connect(
+            [call_vote, candidate]() { call_vote(candidate); });
+    }
+}
+
+EvoteApplication::EvoteApplication(const Wt::WEnvironment& env)
     : Wt::WApplication(env)
     , usernameEdit_(nullptr)
     , passwordEdit_(nullptr)
 {
-    setTitle("Login page");
+    setTitle("Login");
 
     // Descriptive header
     root()->addWidget(
         std::make_unique<Wt::WText>("Enter your credentials to proceed."));
     add_newlines(2);
 
-    // Login text area
+    // Username text area
     root()->addWidget(std::make_unique<Wt::WText>("Username "));
     usernameEdit_ = root()->addWidget(std::make_unique<Wt::WLineEdit>());
 
@@ -42,7 +61,7 @@ LoginApplication::LoginApplication(const Wt::WEnvironment& env)
     // Login Button
     auto login = [this] {
         if (check_credentials(usernameEdit_->text(), passwordEdit_->text()))
-            connectionError_->setText("Connected !");
+            VotePage();
         else
             connectionError_->setText("Invalid credentials !");
     };
