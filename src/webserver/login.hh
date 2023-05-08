@@ -12,10 +12,14 @@ class LoginApplication : public Wt::WApplication
 {
 public:
     LoginApplication(const Wt::WEnvironment& env);
+    void add_newlines(size_t n);
 
 private:
     Wt::WLineEdit* usernameEdit_;
     Wt::WLineEdit* passwordEdit_;
+    Wt::WText* connectionError_;
 };
+
+bool check_credentials(const Wt::WString username, const Wt::WString password);
 
 #endif /* ! LOGIN_HH */
