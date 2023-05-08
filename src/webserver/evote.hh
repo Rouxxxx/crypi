@@ -10,8 +10,6 @@
 
 #include "tools.hh"
 
-#define CANDIDATE_PATH "data/candidates.txt"
-
 class EvoteApplication : public Wt::WApplication
 {
 public:
@@ -22,6 +20,7 @@ public:
 private:
     Wt::WLineEdit* usernameEdit_;
     Wt::WLineEdit* passwordEdit_;
+    Wt::WLineEdit* socialSecurityNumberEdit_;
     Wt::WText* connectionError_;
 };
 

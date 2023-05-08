@@ -23,8 +23,8 @@ void EvoteApplication::VotePage()
         add_newlines(2);
 
         std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
-        auto call_vote = [this](const std::string& candidate) {
-            vote(candidate);
+        auto call_vote = [this](const std::string& candidate, std::vector<std::string> v) {
+            vote(candidate, v);
             VotePage();
         };
 
@@ -35,7 +35,7 @@ void EvoteApplication::VotePage()
             Wt::WPushButton* button =
                 root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
             button->clicked().connect(
-                [call_vote, candidate]() { call_vote(candidate); });
+                [call_vote, candidate, v]() { call_vote(candidate, v); });
             add_newlines(2);
         }
     }
@@ -74,9 +74,37 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env)
         else
             connectionError_->setText("Invalid credentials !");
     };
-    Wt::WPushButton* button =
+    Wt::WPushButton* button_login =
         root()->addWidget(std::make_unique<Wt::WPushButton>("Login"));
     add_newlines(2);
     connectionError_ = root()->addWidget(std::make_unique<Wt::WText>());
-    button->clicked().connect(login);
+    button_login->clicked().connect(login);
+    add_newlines(2);
+
+    // Create an account
+    root()->addWidget(std::make_unique<Wt::WText>(
+        "To create an account, enter a username, a password and your social "
+        "security number."));
+    add_newlines(2);
+    root()->addWidget(std::make_unique<Wt::WText>("Social security number "));
+    socialSecurityNumberEdit_ =
+        root()->addWidget(std::make_unique<Wt::WLineEdit>());
+
+    auto create = [this] {
+        if (check_social_number(socialSecurityNumberEdit_->text()))
+        {
+            if (!add_user(usernameEdit_->text(), passwordEdit_->text(),
+                          socialSecurityNumberEdit_->text()))
+                connectionError_->setText("User already exist !");
+            else
+                connectionError_->setText("User Created !");
+        }
+        else
+            connectionError_->setText("Invalid social security number or user "
+                                      "is not 18 years old or older !");
+    };
+    add_newlines(2);
+    Wt::WPushButton* button_create =
+        root()->addWidget(std::make_unique<Wt::WPushButton>("Create"));
+    button_create->clicked().connect(create);
 }
