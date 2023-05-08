@@ -161,8 +161,10 @@ void vote_example(Container* container, int nb_candidates, int nb_votes)
     (ok) ? std::cout << "Vectors match\n" : std::cout << "ERROR : Vectors don't match\n";
 }
 
+
 int main(int argc, char** argv)
 {
+    
     if (argc || argv)
     {}
     Infos infos_obj;
@@ -172,6 +174,7 @@ int main(int argc, char** argv)
 
     Container container(infos_obj);
 
+
     // Pretty Print
     container.print_parameters();
 
@@ -179,7 +182,7 @@ int main(int argc, char** argv)
     container.init_public_key();
     container.init_secret_key();
 
-    // vote_example(&container, 15, 15000);
+    // vote_example(&container, 15, 15);
 
     return Wt::WRun(argc, argv, [&container](const Wt::WEnvironment& env) {
         return std::make_unique<EvoteApplication>(env, &container);

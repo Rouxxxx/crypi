@@ -35,10 +35,23 @@ public:
     Plaintext encode_vector(std::vector<uint64_t> vote);
     std::vector<uint64_t> decode_vector(Plaintext vector_decrypted);
 
+    void save_votes(Ciphertext ciphertext);
+    void save_vote_count(Ciphertext ciphertext);
+
+    Ciphertext load_cipher(std::string path);
+
+    Ciphertext load_votes();
+    Ciphertext load_vote_count();
+
+    bool test_if_votes_exists();
+    bool test_if_vote_count_exists();
+    SEALContext context;
+
 private:
+    Evaluator evaluator;
     SecretKey secret_key;
     PublicKey public_key;
-    SEALContext context;
+    
     KeyGenerator keygen;
     Infos infos_struct;
 };

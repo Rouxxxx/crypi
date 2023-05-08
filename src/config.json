@@ -2,5 +2,7 @@
     "poly_modulus_degree": 4096,
     "plain_modulus": 1024,
     "data_folder": "data",
-    "secret_key_file": "secret_key.txt"
+    "secret_key_file": "secret_key.txt",
+    "vote_count_file": "vote_count.txt",
+    "votes_file": "votes.txt"
 }

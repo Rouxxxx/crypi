@@ -3,10 +3,15 @@
 #include <cstdio>
 #include <fstream>
 
-void create_folder_if_not_exists(std::string path)
+bool test_if_file_exists(std::string path)
 {
     struct stat sb;
-    if (stat(path.c_str(), &sb) == 0)
+    return (stat(path.c_str(), &sb) == 0);
+}
+
+void create_folder_if_not_exists(std::string path)
+{
+    if (test_if_file_exists(path))
         return;
 
     std::cout << path << " folder doesn't exist. Creating.\n";
@@ -19,8 +24,7 @@ void create_folder_if_not_exists(std::string path)
 void save_secret_key(SecretKey secret_key, std::string path)
 {
     // Delete file if already exists
-    struct stat sb;
-    if (stat(path.c_str(), &sb) == 0)
+    if (test_if_file_exists(path))
         remove(path.c_str());
 
     std::ofstream outfile(path.c_str());
@@ -38,8 +42,7 @@ void save_secret_key(SecretKey secret_key, std::string path)
 void load_secret_key(SEALContext& context, SecretKey secret_key,
                      std::string path)
 {
-    struct stat sb;
-    if (stat(path.c_str(), &sb) != 0)
+    if (!test_if_file_exists(path))
         return;
 
     std::ifstream infile(path.c_str());
@@ -47,4 +50,43 @@ void load_secret_key(SEALContext& context, SecretKey secret_key,
     std::cout << "Importing secret key...";
     secret_key.load(context, infile);
     std::cout << "Secret key imported!\n";
+}
+
+
+
+/*
+    Save ciphertext to a specific file
+*/
+void save_ciphertext(Ciphertext ciphertext, std::string path)
+{
+    // Delete file if already exists
+    if (test_if_file_exists(path))
+        remove(path.c_str());
+
+
+    std::cout << "Saving ciphertext " << path << "...";
+
+    std::ofstream outfile(path, std::ios::binary);
+    ciphertext.save(outfile);
+    outfile.close();
+
+    std::cout << "Ciphertext saved!\n";
+}
+
+Ciphertext load_ciphertext(SEALContext& context,
+                     std::string path)
+{
+    Ciphertext ciphertext;
+    if (!test_if_file_exists(path))
+        return ciphertext;
+
+    std::cout << "Importing ciphertext " << path << "...";
+
+    std::ifstream infile(path, std::ios::binary);
+    ciphertext.load(context, infile);
+    infile.close();
+
+    std::cout << "Ciphertext imported!\n";
+
+    return ciphertext;
 }

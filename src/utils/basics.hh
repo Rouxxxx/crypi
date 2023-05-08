@@ -25,6 +25,8 @@ public:
     uint64_t plain_modulus;
     std::string data_folder;
     std::string secret_key_file;
+    std::string vote_count_file;
+    std::string votes_file;
     void build_static_info(std::string path)
     {
         std::ifstream f(path);
@@ -35,6 +37,9 @@ public:
 
         data_folder = data.value("data_folder", ".");
         secret_key_file = data.value("secret_key_file", ".");
+
+        vote_count_file = data.value("vote_count_file", ".");
+        votes_file = data.value("votes_file", ".");
     }
 };
 

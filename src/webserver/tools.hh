@@ -13,13 +13,15 @@
 
 #include "Wt/WString.h"
 
+#include "../BFV/bfv.hh"
+
 #define USER_PATH "./data/users.txt"
 #define CANDIDATE_PATH "./data/candidates.txt"
 
 bool check_social_number(const Wt::WString num_secu);
 bool check_credentials(const Wt::WString username, const Wt::WString password);
 std::vector<std::string> get_candidates(std::string path);
-void vote(std::string name, std::vector<std::string> candidates);
+void vote(std::string name, std::vector<std::string> candidates, Container* container);
 bool has_voted(const Wt::WString social_security_password, const Wt::WString password);
 bool add_user(const Wt::WString social_security_password,
               const Wt::WString password);

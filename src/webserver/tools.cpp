@@ -87,7 +87,7 @@ std::vector<std::string> get_candidates(std::string path)
     return v;
 }
 
-void vote(std::string name, std::vector<std::string> candidates)
+void vote(std::string name, std::vector<std::string> candidates, Container *container)
 {
     auto it = find(candidates.begin(), candidates.end(), name);
     if (it != candidates.end())
@@ -98,10 +98,50 @@ void vote(std::string name, std::vector<std::string> candidates)
     // Call homomorphic function
     // See main function
     // TODO
+    if (!container) {
+        std::cout << "No container, can't save Ciphertext." << std::endl;
+        return;
+    }
+
+
+    // Encode the nb which will be added to the counter
+    Ciphertext votes_count;
+    Ciphertext tmp_nb_votes = encrypt_number(container, 1);
+
+    if (container->test_if_vote_count_exists()) {
+        votes_count = container->load_vote_count();
+        votes_count = container->sum(votes_count, tmp_nb_votes);
+    }
+    else
+        votes_count = tmp_nb_votes;
+
+
+    // Encode the vote and add it to the current vector
+    int vote_id = it - candidates.begin();
+    std::vector<uint64_t> votes_vector(candidates.size());
+    votes_vector[vote_id] = 1;
+
+    // Encrypt then encode the vector (vector -> plaintext -> encrypted
+    // plaintext)
+    Ciphertext votes;
+    Plaintext votes_vector_txt = container->encode_vector(votes_vector);
+    Ciphertext votes_vector_cipher = container->encrypt(votes_vector_txt);
+
+        
+    if (container->test_if_votes_exists()) {
+        votes = container->load_votes();
+        votes = container->sum(votes, votes_vector_cipher);
+    }
+    else
+        votes = votes_vector_cipher;
+
+    container->save_vote_count(votes_count);
+    container->save_votes(votes);
 }
 
 bool has_voted(const Wt::WString social_security_password, const Wt::WString password)
 {
+    //return false;
     // Calculate hash
     std::string hash = calculate_hash(social_security_password.toUTF8(), password.toUTF8());
 
