@@ -3,9 +3,9 @@
 #include <vector>
 
 #include "BFV/bfv.hh"
-#include "seal/seal.h"
 #include "utils/utils.hh"
-#include "webserver/evote.hh"
+#include "webserver/webserver.hh"
+#include "seal/seal.h"
 
 using namespace seal;
 
@@ -73,11 +73,11 @@ void print_vector(std::vector<uint64_t> vec, int size)
     int s = vec.size();
     if (s == 0)
         return;
+
     std::cout << vec[0];
     for (int i = 1; i < size && i < s; i++)
-    {
         std::cout << " " << vec[i];
-    }
+
     std::cout << std::endl;
 }
 
@@ -134,17 +134,37 @@ void vote_example(Container* container, int nb_candidates, int nb_votes)
               << std::endl;
 
     std::cout << "\nVotes:\n";
-    for (int i = 0; i < nb_votes; i++)
+
+    // Create a vector to check if the operations are accurate.
+    std::vector<uint64_t> checker(nb_candidates, 0);
+    for (int i = 0 ; i < nb_votes; i++)
+        for (int j = 0 ; j < nb_candidates; j++)
+            checker[j] += votes[i][j];
+
+    std::cout << "\nReal vote result:\n";
+    print_vector(checker, nb_candidates);
+
+    std::cout << "\nResult computed:\n";
+    print_vector(result, nb_candidates);
+
+    bool ok = true;
+    for (int id = 0; id < nb_candidates; id++)
     {
-        print_vector(votes[i], nb_candidates);
+        if (checker[id] != result[id])
+        {
+            ok = false;
+            break;
+        }
     }
 
-    std::cout << "\nResult:\n";
-    print_vector(result, nb_candidates);
+    std::cout << std::endl;
+    (ok) ? std::cout << "Vectors match\n" : std::cout << "ERROR : Vectors don't match\n";
 }
 
 int main(int argc, char** argv)
 {
+    if (argc || argv)
+    {}
     Infos infos_obj;
 
     // Load infos from JSON
@@ -159,9 +179,9 @@ int main(int argc, char** argv)
     container.init_public_key();
     container.init_secret_key();
 
-    vote_example(&container, 5, 15);
+    // vote_example(&container, 15, 15000);
 
-    return Wt::WRun(argc, argv, [](const Wt::WEnvironment& env) {
-        return std::make_unique<EvoteApplication>(env);
+    return Wt::WRun(argc, argv, [&container](const Wt::WEnvironment& env) {
+        return std::make_unique<EvoteApplication>(env, &container);
     });
 }

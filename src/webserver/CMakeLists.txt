@@ -5,4 +5,5 @@ add_library(web_server SHARED
     tools.hh
 )
 
+target_link_libraries(web_server PRIVATE SEAL::seal)
 target_link_libraries(web_server PRIVATE wt wthttp)

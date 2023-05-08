@@ -44,10 +44,11 @@ void EvoteApplication::VotePage()
 }
 
 // Login page
-EvoteApplication::EvoteApplication(const Wt::WEnvironment& env)
+EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* container)
     : Wt::WApplication(env)
     , socialSecurityNumberEdit_(nullptr)
     , passwordEdit_(nullptr)
+    , container(container)
 {
     setTitle("Login");
 
