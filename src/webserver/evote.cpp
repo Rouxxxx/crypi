@@ -1,11 +1,5 @@
 #include "evote.hh"
 
-bool check_credentials(const Wt::WString username, const Wt::WString password)
-{
-    // Check file from data/credentials.csv
-    return username == "root" && password == "root";
-}
-
 void EvoteApplication::add_newlines(size_t n)
 {
     for (size_t i = 0; i < n; i++)

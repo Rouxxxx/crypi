@@ -1,5 +1,11 @@
 #include "tools.hh"
 
+bool check_credentials(const Wt::WString username, const Wt::WString password)
+{
+    // Check file from data/credentials.csv
+    return username == "root" && password == "root";
+}
+
 std::vector<std::string> get_candidates(std::string path)
 {
     std::fstream file;

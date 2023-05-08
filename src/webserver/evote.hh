@@ -23,6 +23,4 @@ private:
     Wt::WText* connectionError_;
 };
 
-bool check_credentials(const Wt::WString username, const Wt::WString password);
-
 #endif /* ! EVOTE_HH */
