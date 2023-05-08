@@ -1,5 +1,24 @@
 #include "tools.hh"
 
+std::string calculate_hash(const std::string username, const std::string password)
+{
+    // Create single string
+    std::string combined_str = username + password;
+
+    // Calculate hash
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()), combined_str.size(), hash);
+
+    std::stringstream ss;
+    // Hex format : FF FF FF FF
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
+    }
+    std::string hex_hash = ss.str();
+
+    return hex_hash;
+}
+
 // Check if user is 18 or older user social security number.
 bool check_social_number(const Wt::WString num_secu)
 {
@@ -22,7 +41,34 @@ bool check_social_number(const Wt::WString num_secu)
 
 bool check_credentials(const Wt::WString username, const Wt::WString password)
 {
-    return username == "root" && password == "root";
+    // Calculate hash
+    std::string hash = calculate_hash(username.toUTF8(), password.toUTF8());
+
+    // Open user file
+    std::fstream file;
+    std::string line;
+
+    // Check if hash is present in file
+    file.open(USER_PATH);
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
+            std::vector<std::string> output;
+            std::stringstream ss(line);
+            std::string val;
+            const char separator = ';';
+            std::getline(ss, val, separator);
+            if (hash == val)
+            {
+                file.close();
+                return true;
+            }
+        }
+        file.close();
+    }
+    return false;
+
 }
 
 std::vector<std::string> get_candidates(std::string path)
@@ -54,31 +100,47 @@ void vote(std::string name, std::vector<std::string> candidates)
     // TODO
 }
 
-bool has_voted()
+bool has_voted(const Wt::WString social_security_password, const Wt::WString password)
 {
-    // Add data in file to check if user has voted in data/
-    // TODO
+    // Calculate hash
+    std::string hash = calculate_hash(social_security_password.toUTF8(), password.toUTF8());
+
+    // Open user file
+    std::fstream file;
+    std::string line;
+
+    // Check if hash is present in file
+    file.open(USER_PATH);
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
+            std::vector<std::string> output;
+            std::stringstream ss(line);
+            std::string val;
+            const char separator = ';';
+            std::getline(ss, val, separator);
+            if (hash == val)
+            {
+                std::getline(ss, val, separator);
+                if (val == "1")
+                {
+                    file.close();
+                    return true;
+                }
+                else
+                {
+                    file.close();
+                    return false;
+                }
+            }
+        }
+        file.close();
+    }
     return false;
 }
 
-std::string calculate_hash(const std::string username, const std::string password)
-{
-    // Create single string
-    std::string combined_str = username + password;
 
-    // Calculate hash
-    unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()), combined_str.size(), hash);
-
-    std::stringstream ss;
-    // Hex format : FF FF FF FF
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
-    }
-    std::string hex_hash = ss.str();
-
-    return hex_hash;
-}
 
 bool add_user(const Wt::WString social_security_password, const Wt::WString password)
 {

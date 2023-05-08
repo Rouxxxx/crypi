@@ -14,7 +14,7 @@ void EvoteApplication::VotePage()
     setTitle("Vote");
 
     auto headline = root()->addWidget(std::make_unique<Wt::WText>());
-    bool voted = has_voted();
+    bool voted = has_voted(socialSecurityNumberEdit_->text(), passwordEdit_->text());
     if (voted)
         headline->setText("Your vote has been saved !");
     else
