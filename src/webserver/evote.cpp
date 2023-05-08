@@ -12,28 +12,32 @@ void EvoteApplication::VotePage()
     root()->clear();
     setTitle("Vote");
 
-    auto headline = root()->addWidget(
-        std::make_unique<Wt::WText>());
+    auto headline = root()->addWidget(std::make_unique<Wt::WText>());
     bool voted = has_voted();
     if (voted)
         headline->setText("Your vote has been saved !");
     else
+    {
         headline->setText("Vote for your favorite candidate !");
 
-    add_newlines(2);
-
-    std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
-    auto call_vote = [this](const std::string& candidate) { vote(candidate); };
-
-    // Buttons
-    for (size_t i = 0; i < v.size(); i++)
-    {
-        std::string candidate = v[i];
-        Wt::WPushButton* button =
-            root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
-        button->clicked().connect(
-            [call_vote, candidate]() { call_vote(candidate); });
         add_newlines(2);
+
+        std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
+        auto call_vote = [this](const std::string& candidate) {
+            vote(candidate);
+            VotePage();
+        };
+
+        // Buttons
+        for (size_t i = 0; i < v.size(); i++)
+        {
+            std::string candidate = v[i];
+            Wt::WPushButton* button =
+                root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
+            button->clicked().connect(
+                [call_vote, candidate]() { call_vote(candidate); });
+            add_newlines(2);
+        }
     }
 }
 
