@@ -45,26 +45,25 @@ void vote(std::string name, std::vector<std::string> candidates)
 {
     auto it = find(candidates.begin(), candidates.end(), name);
     if (it != candidates.end())
-        std::cout << "Impossible" << std::endl;
-    else
         std::cout << "vote for " << name << " !" << std::endl;
+    else
+        std::cout << "Impossible" << std::endl;
 
     // Call homomorphic function
     // See main function
-    //TODO
+    // TODO
 }
 
 bool has_voted()
 {
     // Add data in file to check if user has voted in data/
-    //TODO
+    // TODO
     return false;
 }
 
-bool add_user(const Wt::WString username, const Wt::WString password,
-              const Wt::WString social_security_password)
+bool add_user(const Wt::WString social_security_password, const Wt::WString password)
 {
-    //TODO
-    std::cout << username << password << social_security_password << std::endl;
+    // TODO
+    std::cout << password << social_security_password << std::endl;
     return false;
 }

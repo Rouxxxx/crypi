@@ -18,7 +18,6 @@ bool check_credentials(const Wt::WString username, const Wt::WString password);
 std::vector<std::string> get_candidates(std::string path);
 void vote(std::string name, std::vector<std::string> candidates);
 bool has_voted();
-bool add_user(const Wt::WString username, const Wt::WString password,
-              const Wt::WString social_security_password);
+bool add_user(const Wt::WString social_security_password, const Wt::WString password);
 
 #endif /* ! TOOLS_HH */

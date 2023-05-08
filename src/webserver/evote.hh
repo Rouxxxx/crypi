@@ -18,9 +18,8 @@ public:
     void VotePage();
 
 private:
-    Wt::WLineEdit* usernameEdit_;
-    Wt::WLineEdit* passwordEdit_;
     Wt::WLineEdit* socialSecurityNumberEdit_;
+    Wt::WLineEdit* passwordEdit_;
     Wt::WText* connectionError_;
 };
 

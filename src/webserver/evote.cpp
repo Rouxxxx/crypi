@@ -7,6 +7,7 @@ void EvoteApplication::add_newlines(size_t n)
         root()->addWidget(std::make_unique<Wt::WBreak>());
 }
 
+// Vote page
 void EvoteApplication::VotePage()
 {
     root()->clear();
@@ -23,7 +24,8 @@ void EvoteApplication::VotePage()
         add_newlines(2);
 
         std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
-        auto call_vote = [this](const std::string& candidate, std::vector<std::string> v) {
+        auto call_vote = [this](const std::string& candidate,
+                                std::vector<std::string> v) {
             vote(candidate, v);
             VotePage();
         };
@@ -41,9 +43,10 @@ void EvoteApplication::VotePage()
     }
 }
 
+// Login page
 EvoteApplication::EvoteApplication(const Wt::WEnvironment& env)
     : Wt::WApplication(env)
-    , usernameEdit_(nullptr)
+    , socialSecurityNumberEdit_(nullptr)
     , passwordEdit_(nullptr)
 {
     setTitle("Login");
@@ -54,8 +57,8 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env)
     add_newlines(2);
 
     // Username text area
-    root()->addWidget(std::make_unique<Wt::WText>("Username "));
-    usernameEdit_ = root()->addWidget(std::make_unique<Wt::WLineEdit>());
+    root()->addWidget(std::make_unique<Wt::WText>("Social security number "));
+    socialSecurityNumberEdit_ = root()->addWidget(std::make_unique<Wt::WLineEdit>());
 
     add_newlines(2);
 
@@ -69,7 +72,7 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env)
 
     // Login Button
     auto login = [this] {
-        if (check_credentials(usernameEdit_->text(), passwordEdit_->text()))
+        if (check_credentials(socialSecurityNumberEdit_->text(), passwordEdit_->text()))
             VotePage();
         else
             connectionError_->setText("Invalid credentials !");
@@ -83,18 +86,12 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env)
 
     // Create an account
     root()->addWidget(std::make_unique<Wt::WText>(
-        "To create an account, enter a username, a password and your social "
-        "security number."));
-    add_newlines(2);
-    root()->addWidget(std::make_unique<Wt::WText>("Social security number "));
-    socialSecurityNumberEdit_ =
-        root()->addWidget(std::make_unique<Wt::WLineEdit>());
+        "To create an account, enter your social security number and a password. Then click on 'Create'."));
 
     auto create = [this] {
         if (check_social_number(socialSecurityNumberEdit_->text()))
         {
-            if (!add_user(usernameEdit_->text(), passwordEdit_->text(),
-                          socialSecurityNumberEdit_->text()))
+            if (!add_user(socialSecurityNumberEdit_->text(), passwordEdit_->text()))
                 connectionError_->setText("User already exist !");
             else
                 connectionError_->setText("User Created !");
