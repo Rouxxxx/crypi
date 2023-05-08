@@ -2,7 +2,7 @@
 
 bool check_credentials(const Wt::WString username, const Wt::WString password)
 {
-    // Check file from data/credentials.csv
+    // Check file from data/credentials.*
     // Check eligility of user (age)
     return username == "root" && password == "root";
 }
@@ -32,6 +32,6 @@ void vote(std::string name)
 
 bool has_voted()
 {
-    // Add data in file
+    // Add data in file to check if user has voted in data/
     return false;
 }
