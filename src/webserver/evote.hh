@@ -10,6 +10,8 @@
 
 #include "tools.hh"
 
+#define CANDIDATE_PATH "data/candidates.txt"
+
 class EvoteApplication : public Wt::WApplication
 {
 public:

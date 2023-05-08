@@ -26,3 +26,8 @@ void vote(std::string name)
 {
     std::cout << "vote for " << name << " !" << std::endl;
 }
+
+bool has_voted()
+{
+    return false;
+}
