@@ -5,7 +5,7 @@ bool check_social_number(const Wt::WString num_secu)
 {
     // Regex for valid social security number
     std::regex regex_secu(
-        "^(1|2)\\d{2}(0[1-9]|1[0-2])(0[1-9]|[1-2]\\d|3[0-1])(\\d{3})(\\d{2})$");
+        "^(1|2)\\d{2}(0[1-9]|1[0-2])\\d{5}\\d{3}\\d{2}$");
     std::smatch match;
     const std::string str = num_secu.toUTF8();
 
@@ -34,7 +34,7 @@ std::vector<std::string> get_candidates(std::string path)
     file.open(path);
     if (file.is_open())
     {
-        while (getline(file, s))
+        while (std::getline(file, s))
             v.push_back(s);
         file.close();
     }
@@ -61,9 +61,56 @@ bool has_voted()
     return false;
 }
 
+std::string calculate_hash(const std::string username, const std::string password)
+{
+    // Create single string
+    std::string combined_str = username + password;
+
+    // Calculate hash
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()), combined_str.size(), hash);
+
+    std::stringstream ss;
+    // Hex format : FF FF FF FF
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
+    }
+    std::string hex_hash = ss.str();
+
+    return hex_hash;
+}
+
 bool add_user(const Wt::WString social_security_password, const Wt::WString password)
 {
-    // TODO
-    std::cout << password << social_security_password << std::endl;
-    return false;
+    // Calculate hash
+    std::string hash = calculate_hash(social_security_password.toUTF8(), password.toUTF8());
+
+    // Open user file
+    std::fstream file;
+    std::string line;
+
+    // Check if hash is present in file
+    file.open(USER_PATH);
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
+            std::vector<std::string> output;
+            std::stringstream ss(line);
+            std::string val;
+            const char separator = ';';
+            std::getline(ss, val, separator);
+            if (hash == val)
+            {
+                file.close();
+                return false;
+            }
+        }
+        file.close();
+    }
+
+    // Add user in database
+    std::ofstream out(USER_PATH, std::ios::app);
+    out << hash << ";0" << std::endl;
+    return true;
 }

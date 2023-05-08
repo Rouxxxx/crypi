@@ -4,6 +4,9 @@
 #include <chrono>
 #include <ctime>
 #include <fstream>
+#include <sstream>
+#include <openssl/sha.h>
+#include <iomanip>
 #include <iostream>
 #include <regex>
 #include <vector>

@@ -14,5 +14,6 @@ add_compile_options(-Wall -Werror -Wextra -Wpedantic -g)
 
 find_package(SEAL REQUIRED)
 find_package(Wt REQUIRED)
+find_package(OpenSSL REQUIRED)
 
 add_subdirectory(src)

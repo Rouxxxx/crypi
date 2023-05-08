@@ -6,4 +6,4 @@ add_library(web_server SHARED
 )
 
 target_link_libraries(web_server PRIVATE SEAL::seal)
-target_link_libraries(web_server PRIVATE wt wthttp)
+target_link_libraries(web_server PRIVATE wt wthttp OpenSSL::SSL)
