@@ -5,8 +5,10 @@
 #include <fstream>
 #include <stddef.h>
 #include <string>
+#include <vector>
+#include <sstream>
 
-#include "nlohmann_json.hpp"
+#include "jsonLib.hh"
 
 inline int hex_to_int(std::string hexString)
 {
@@ -49,17 +51,16 @@ public:
     std::string votes_file;
     void build_static_info(std::string path)
     {
-        std::ifstream f(path);
-        nlohmann::json data = nlohmann::json::parse(f);
+        JsonLib json(path);
 
-        poly_modulus_degree = data.value("poly_modulus_degree", 0);
-        plain_modulus = data.value("plain_modulus", 0);
+        json.readUint64("poly_modulus_degree", poly_modulus_degree);
+        json.readUint64("plain_modulus", plain_modulus);
 
-        data_folder = data.value("data_folder", ".");
-        secret_key_file = data.value("secret_key_file", ".");
+        json.readString("data_folder", data_folder);
+        json.readString("secret_key_file", secret_key_file);
 
-        vote_count_file = data.value("vote_count_file", ".");
-        votes_file = data.value("votes_file", ".");
+        json.readString("vote_count_file", vote_count_file);
+        json.readString("votes_file", votes_file);
     }
 };
 
