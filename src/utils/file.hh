@@ -6,7 +6,6 @@
 #include <iostream>
 #include <sys/stat.h>
 
-#include "nlohmann_json.hpp"
 #include "seal/seal.h"
 
 using namespace seal;

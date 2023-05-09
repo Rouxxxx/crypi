@@ -57,10 +57,17 @@ bool JsonLib::readString(const std::string& key, std::string& value) {
         return false;
     }
 
+    size_t next_quote_pos = file.find("\"", value_pos + 1);
+    if (value_pos == std::string::npos) {
+        std::cerr << "Error: Non terminated string in JSON at pos " << value_pos << std::endl;
+        return false;
+    }
+
     // Extract string value
-    std::string value_str = file.substr(value_pos + 1);
-    value_str.erase(0, value_str.find_first_not_of("\""));
-    value_str.erase(value_str.find_last_not_of("\"") + 1);
+    std::string value_str = file.substr(value_pos + 3);
+
+    next_quote_pos = value_str.find("\"", 0);
+    value_str.erase(next_quote_pos, value_str.size());
 
     // Set output parameter
     value = value_str;

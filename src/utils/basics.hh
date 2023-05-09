@@ -40,6 +40,8 @@ inline int find_max(std::vector<uint64_t> table)
     return id_max;
 }
 
+#include <iostream>
+
 class Infos
 {
 public:
