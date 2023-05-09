@@ -162,6 +162,7 @@ void vote(std::string name, std::vector<std::string> candidates,
 bool has_voted(const Wt::WString social_security_password,
                const Wt::WString password)
 {
+    // return false;
     // Calculate hash
     std::string hash =
         calculate_hash(social_security_password.toUTF8(), password.toUTF8());

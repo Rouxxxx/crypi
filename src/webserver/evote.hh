@@ -18,14 +18,9 @@ class EvoteApplication : public Wt::WApplication
 public:
     EvoteApplication(const Wt::WEnvironment& env, Container* container);
     void add_newlines(size_t n);
-    void VotePage();
+    void VotePage(Wt::WString socialNumber, Wt::WString password);
 
 private:
-    Wt::WLineEdit* socialSecurityNumberEdit_;
-    Wt::WLineEdit* passwordEdit_;
-    Wt::WText* connectionError_;
-    Wt::WText* nb_votes_;
-    Wt::WText* winner_;
     Container* container;
 };
 

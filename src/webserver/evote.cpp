@@ -11,14 +11,14 @@ void EvoteApplication::add_newlines(size_t n)
 }
 
 // Vote page
-void EvoteApplication::VotePage()
+void EvoteApplication::VotePage(Wt::WString socialNumber, Wt::WString password)
 {
     root()->clear();
     setTitle("Vote");
 
     auto headline = root()->addWidget(std::make_unique<Wt::WText>());
     bool voted =
-        has_voted(socialSecurityNumberEdit_->text(), passwordEdit_->text());
+        has_voted(socialNumber, password);
     if (voted)
         headline->setText("Your vote has been saved !");
     else
@@ -28,12 +28,12 @@ void EvoteApplication::VotePage()
         add_newlines(2);
 
         std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
-        auto call_vote = [this](const std::string& candidate,
+        auto call_vote = [this, socialNumber, password](const std::string& candidate,
                                 std::vector<std::string> v) {
             vote(candidate, v, container,
-                 calculate_hash(socialSecurityNumberEdit_->text().toUTF8(),
-                                passwordEdit_->text().toUTF8()));
-            VotePage();
+                 calculate_hash(socialNumber.toUTF8(),
+                                password.toUTF8()));
+            VotePage(socialNumber, password);
         };
 
         // Buttons
@@ -43,7 +43,7 @@ void EvoteApplication::VotePage()
             Wt::WPushButton* button =
                 root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
             button->clicked().connect(
-                [call_vote, candidate, v]() { call_vote(candidate, v); });
+                [call_vote, candidate, v, socialNumber, password]() { call_vote(candidate, v); });
             add_newlines(2);
         }
     }
@@ -53,8 +53,6 @@ void EvoteApplication::VotePage()
 EvoteApplication::EvoteApplication(const Wt::WEnvironment& env,
                                    Container* container)
     : Wt::WApplication(env)
-    , socialSecurityNumberEdit_(nullptr)
-    , passwordEdit_(nullptr)
     , container(container)
 {
 
@@ -120,8 +118,10 @@ LoginPanel::LoginPanel(EvoteApplication *app)
 
 void LoginPanel::submitLoginForm()
 {
-    if (check_credentials(loginInput->text(), passwordInput->text()))
-        app->VotePage();
+    Wt::WString log = loginInput->text();
+    Wt::WString passw = loginInput->text();
+    if (check_credentials(log, passw))
+        app->VotePage(log, passw);
     else
         errorLabel->setText("Invalid credentials !");
 }
@@ -183,7 +183,7 @@ void CreatePanel::create()
     else
         errorLabel->setText("Invalid social security number or user is not 18yo or older !");
     if (check_credentials(log, passw))
-        app->VotePage();
+        app->VotePage(log, passw);
 }
 
 

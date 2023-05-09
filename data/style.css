@@ -25,14 +25,12 @@ body {
 .login-panel {
   top: 0;
   right: 0;
-
   border: 5px solid #7464bc;
 }
 
 .create-panel {
   top: 0;
   left: 0;
-  
   border: 5px solid #43ac29;
 }
 
@@ -91,13 +89,13 @@ input::-moz-focus-inner {
 {
   position: absolute;
   transform: translateX(-95%) translateY(700%);
-  width:250px;
+  width:300px;
 }
 .label-nb-votes
 {
   position: absolute;
   transform: translateY(700%);
-  width:250px;
+  width:300px;
 }
 
 
@@ -179,12 +177,12 @@ button{
 
 .button-nb-votes
 {
-  left:200%;
+  left:300%;
 }
 
 .button-votes
 {
-  right:100%;
+  right:200%;
 }
 
 @keyframes hue {
