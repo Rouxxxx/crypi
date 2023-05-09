@@ -30,10 +30,10 @@ Container::Container(Infos infos)
     : context(set_context(infos))
     , evaluator(Evaluator(context))
     , keygen(KeyGenerator(context))
-    
+
 {
     infos_struct = infos;
-    
+
     std::string path = infos_struct.data_folder + "/" + infos_struct.votes_file;
     if (test_if_file_exists(path))
         remove(path.c_str());
@@ -208,14 +208,15 @@ void Container::print_parameters()
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
 
-
 bool Container::test_if_votes_exists()
 {
-    return test_if_file_exists(infos_struct.data_folder + "/" + infos_struct.votes_file);
+    return test_if_file_exists(infos_struct.data_folder + "/"
+                               + infos_struct.votes_file);
 }
 bool Container::test_if_vote_count_exists()
 {
-    return test_if_file_exists(infos_struct.data_folder + "/" + infos_struct.vote_count_file);
+    return test_if_file_exists(infos_struct.data_folder + "/"
+                               + infos_struct.vote_count_file);
 }
 
 Ciphertext Container::load_cipher(std::string path)
@@ -228,22 +229,25 @@ Ciphertext Container::load_cipher(std::string path)
     return ciphertext;
 }
 
-
 void Container::save_votes(Ciphertext ciphertext)
 {
     create_folder_if_not_exists(infos_struct.data_folder);
-    save_ciphertext(ciphertext, infos_struct.data_folder + "/" + infos_struct.votes_file);
+    save_ciphertext(ciphertext,
+                    infos_struct.data_folder + "/" + infos_struct.votes_file);
 }
 
 void Container::save_vote_count(Ciphertext ciphertext)
 {
     create_folder_if_not_exists(infos_struct.data_folder);
-    save_ciphertext(ciphertext, infos_struct.data_folder + "/" + infos_struct.vote_count_file);
+    save_ciphertext(ciphertext,
+                    infos_struct.data_folder + "/"
+                        + infos_struct.vote_count_file);
 }
 
 Ciphertext Container::load_vote_count()
 {
-    std::string path = infos_struct.data_folder + "/" + infos_struct.vote_count_file;
+    std::string path =
+        infos_struct.data_folder + "/" + infos_struct.vote_count_file;
     return load_cipher(path);
 }
 

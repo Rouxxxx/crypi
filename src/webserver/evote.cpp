@@ -1,4 +1,5 @@
 #include "evote.hh"
+
 #include <string>
 
 void EvoteApplication::add_newlines(size_t n)
@@ -15,7 +16,8 @@ void EvoteApplication::VotePage()
     setTitle("Vote");
 
     auto headline = root()->addWidget(std::make_unique<Wt::WText>());
-    bool voted = has_voted(socialSecurityNumberEdit_->text(), passwordEdit_->text());
+    bool voted =
+        has_voted(socialSecurityNumberEdit_->text(), passwordEdit_->text());
     if (voted)
         headline->setText("Your vote has been saved !");
     else
@@ -45,7 +47,8 @@ void EvoteApplication::VotePage()
 }
 
 // Login page
-EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* container)
+EvoteApplication::EvoteApplication(const Wt::WEnvironment& env,
+                                   Container* container)
     : Wt::WApplication(env)
     , socialSecurityNumberEdit_(nullptr)
     , passwordEdit_(nullptr)
@@ -60,7 +63,8 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
 
     // Username text area
     root()->addWidget(std::make_unique<Wt::WText>("Social security number "));
-    socialSecurityNumberEdit_ = root()->addWidget(std::make_unique<Wt::WLineEdit>());
+    socialSecurityNumberEdit_ =
+        root()->addWidget(std::make_unique<Wt::WLineEdit>());
 
     add_newlines(2);
 
@@ -74,7 +78,8 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
 
     // Login Button
     auto login = [this] {
-        if (check_credentials(socialSecurityNumberEdit_->text(), passwordEdit_->text()))
+        if (check_credentials(socialSecurityNumberEdit_->text(),
+                              passwordEdit_->text()))
             VotePage();
         else
             connectionError_->setText("Invalid credentials !");
@@ -88,12 +93,14 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
 
     // Create an account
     root()->addWidget(std::make_unique<Wt::WText>(
-        "To create an account, enter your social security number and a password. Then click on 'Create'."));
+        "To create an account, enter your social security number and a "
+        "password. Then click on 'Create'."));
 
     auto create = [this] {
         if (check_social_number(socialSecurityNumberEdit_->text()))
         {
-            if (!add_user(socialSecurityNumberEdit_->text(), passwordEdit_->text()))
+            if (!add_user(socialSecurityNumberEdit_->text(),
+                          passwordEdit_->text()))
                 connectionError_->setText("User already exist !");
             else
                 connectionError_->setText("User Created !");
@@ -107,10 +114,6 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
         root()->addWidget(std::make_unique<Wt::WPushButton>("Create"));
     button_create->clicked().connect(create);
 
-
-
-
-
     /*
     # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
     #
@@ -123,11 +126,11 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
 
     // Show vote count
     auto show_nb_votes = [this, container] {
-
         std::string vote_str = "\tCurrent nb of votes: ";
         if (!container->test_if_vote_count_exists())
             vote_str += "0.";
-        else {
+        else
+        {
             // Load and decrypt the number of votes
             Ciphertext nb_votes = container->load_vote_count();
             Plaintext nb_votes_decrypted = container->decrypt(nb_votes);
@@ -137,15 +140,11 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
         nb_votes_->setText(vote_str);
     };
 
-    Wt::WPushButton* button_nb_votes =
-        root()->addWidget(std::make_unique<Wt::WPushButton>("Show current number of votes"));
+    Wt::WPushButton* button_nb_votes = root()->addWidget(
+        std::make_unique<Wt::WPushButton>("Show current number of votes"));
 
     nb_votes_ = root()->addWidget(std::make_unique<Wt::WText>());
     button_nb_votes->clicked().connect(show_nb_votes);
-
-
-
-
 
     /*
     # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -160,17 +159,22 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
         {
             winner_->setText("\tNo votes for now : no winner.");
         }
-        else {
+        else
+        {
             // Load and decrypt the number of votes
             Ciphertext votes_cipher = container->load_votes();
             Plaintext votes_decrypted = container->decrypt(votes_cipher);
-            std::vector<uint64_t> result = container->decode_vector(votes_decrypted);
+            std::vector<uint64_t> result =
+                container->decode_vector(votes_decrypted);
 
             int id_winner = find_max(result);
 
-            std::vector<std::string> candidates = get_candidates(CANDIDATE_PATH);
+            std::vector<std::string> candidates =
+                get_candidates(CANDIDATE_PATH);
 
-            winner_->setText("\tCurrent winner: " + candidates[id_winner] + " with " + std::to_string(result[id_winner]) + " votes.");
+            winner_->setText("\tCurrent winner: " + candidates[id_winner]
+                             + " with " + std::to_string(result[id_winner])
+                             + " votes.");
         }
     };
 
