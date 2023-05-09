@@ -29,7 +29,9 @@ void EvoteApplication::VotePage()
         std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
         auto call_vote = [this](const std::string& candidate,
                                 std::vector<std::string> v) {
-            vote(candidate, v, container);
+            vote(candidate, v, container,
+                 calculate_hash(socialSecurityNumberEdit_->text().toUTF8(),
+                                passwordEdit_->text().toUTF8()));
             VotePage();
         };
 

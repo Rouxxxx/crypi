@@ -108,13 +108,17 @@ std::vector<std::string> get_candidates(std::string path)
 }
 
 void vote(std::string name, std::vector<std::string> candidates,
-          Container* container)
+          Container* container, std::string hash)
 {
     auto it = find(candidates.begin(), candidates.end(), name);
     if (it != candidates.end())
         std::cout << "vote for " << name << " !" << std::endl;
     else
         std::cout << "Impossible" << std::endl;
+
+    // Ensure user vote only once
+    std::ofstream out(VOTED_PATH, std::ios::app);
+    out << hash << std::endl;
 
     // Call homomorphic function
     if (!container)
@@ -161,7 +165,6 @@ void vote(std::string name, std::vector<std::string> candidates,
 bool has_voted(const Wt::WString social_security_password,
                const Wt::WString password)
 {
-    // return false;
     // Calculate hash
     std::string hash =
         calculate_hash(social_security_password.toUTF8(), password.toUTF8());
@@ -171,30 +174,13 @@ bool has_voted(const Wt::WString social_security_password,
     std::string line;
 
     // Check if hash is present in file
-    file.open(USER_PATH);
+    file.open(VOTED_PATH);
     if (file.is_open())
     {
         while (std::getline(file, line))
         {
-            std::vector<std::string> output;
-            std::stringstream ss(line);
-            std::string val;
-            const char separator = ';';
-            std::getline(ss, val, separator);
-            if (hash == val)
-            {
-                std::getline(ss, val, separator);
-                if (val == "1")
-                {
-                    file.close();
-                    return true;
-                }
-                else
-                {
-                    file.close();
-                    return false;
-                }
-            }
+            if (hash == line)
+                return true;
         }
         file.close();
     }
@@ -257,6 +243,6 @@ bool add_user(const Wt::WString social_security_password,
 
     // Add user in database
     std::ofstream out(USER_PATH, std::ios::app);
-    out << hash << ";0" << std::endl;
+    out << hash << std::endl;
     return true;
 }
