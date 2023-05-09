@@ -67,86 +67,15 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env,
     auto createPanel = std::make_unique<CreatePanel>(this);
     root()->addWidget(std::move(createPanel));
 
+    auto buttonPanel = std::make_unique<ButtonPanel>(this, container);
+    root()->addWidget(std::move(buttonPanel));
+
     // Create an account
     root()->addWidget(std::make_unique<Wt::WText>(
         "To create an account, use the 'Create' panel and use your social security number with a password."));
     add_newlines(1);
     root()->addWidget(std::make_unique<Wt::WText>(
         "If you already have an account, use the 'Login' panel."));
-
-    /*
-    # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-    #
-    #       Number of votes rendering
-    #
-    # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-    */
-
-    add_newlines(2);
-
-    // Show vote count
-    auto show_nb_votes = [this, container] {
-        std::string vote_str = "\tCurrent nb of votes: ";
-        if (!container->test_if_vote_count_exists())
-            vote_str += "0.";
-        else
-        {
-            // Load and decrypt the number of votes
-            Ciphertext nb_votes = container->load_vote_count();
-            Plaintext nb_votes_decrypted = container->decrypt(nb_votes);
-
-            vote_str += nb_votes_decrypted.to_string() + ".";
-        }
-        nb_votes_->setText(vote_str);
-    };
-
-    Wt::WPushButton* button_nb_votes = root()->addWidget(
-        std::make_unique<Wt::WPushButton>("Show current number of votes"));
-
-    nb_votes_ = root()->addWidget(std::make_unique<Wt::WText>());
-    button_nb_votes->clicked().connect(show_nb_votes);
-
-    /*
-    # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-    #
-    #           Votes rendering
-    #
-    # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-    */
-    add_newlines(2);
-    auto show_winner = [this, container] {
-        if (!container->test_if_vote_count_exists())
-        {
-            winner_->setText("\tNo votes for now : no winner.");
-        }
-        else
-        {
-            // Load and decrypt the number of votes
-            Ciphertext votes_cipher = container->load_votes();
-            Plaintext votes_decrypted = container->decrypt(votes_cipher);
-            std::vector<uint64_t> result =
-                container->decode_vector(votes_decrypted);
-
-            int id_winner = find_max(result);
-
-            std::vector<std::string> candidates =
-                get_candidates(CANDIDATE_PATH);
-
-            winner_->setText("\tCurrent winner: " + candidates[id_winner]
-                             + " with " + std::to_string(result[id_winner])
-                             + " votes.");
-        }
-    };
-
-    Wt::WPushButton* button_votes =
-        root()->addWidget(std::make_unique<Wt::WPushButton>("Show winner"));
-
-    winner_ = root()->addWidget(std::make_unique<Wt::WText>());
-    button_votes->clicked().connect(show_winner);
-
-    button_votes->setStyleClass("cool-button");
-    button_nb_votes->setStyleClass("cool-button");
-
 }
 
 /*
@@ -255,4 +184,74 @@ void CreatePanel::create()
         errorLabel->setText("Invalid social security number or user is not 18yo or older !");
     if (check_credentials(log, passw))
         app->VotePage();
+}
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#               Front page
+#         Votes rendering buttons
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+
+ButtonPanel::ButtonPanel(EvoteApplication* app, Container* container)
+    : app(app)
+    , container(container)
+{
+    setStyleClass("button-panel");
+
+    layout = setLayout(std::make_unique<Wt::WVBoxLayout>());
+    Wt::WPushButton* button_votes = layout->addWidget(std::make_unique<Wt::WPushButton>("Show winner"));
+    button_votes->clicked().connect(this, &ButtonPanel::show_votes_result);
+    button_votes->setStyleClass("glow-button button-votes");
+
+    votes_result = layout->addWidget(std::make_unique<Wt::WText>());
+    votes_result->setStyleClass("label-votes");
+
+    button_nb_votes = layout->addWidget(std::make_unique<Wt::WPushButton>("Show votes amount"));
+    button_nb_votes->clicked().connect(this, &ButtonPanel::show_nb_votes);
+    button_nb_votes->setStyleClass("glow-button button-nb-votes");
+
+    nb_votes = layout->addWidget(std::make_unique<Wt::WText>());
+    nb_votes->setStyleClass("label-nb-votes");
+}
+
+void ButtonPanel::show_votes_result()
+{
+    if (!container->test_if_vote_count_exists())
+        votes_result->setText("\tNo votes for now : no winner.");
+    else
+    {
+        // Load and decrypt the number of votes
+        Ciphertext votes_cipher = container->load_votes();
+        Plaintext votes_decrypted = container->decrypt(votes_cipher);
+        std::vector<uint64_t> result = container->decode_vector(votes_decrypted);
+
+        int id_winner = find_max(result);
+
+        std::vector<std::string> candidates = get_candidates(CANDIDATE_PATH);
+
+        votes_result->setText("\tCurrent winner: " + candidates[id_winner]
+                    + " with " + std::to_string(result[id_winner])
+                    + " votes.");
+        }
+}
+
+void ButtonPanel::show_nb_votes()
+{
+    std::string vote_str = "\tCurrent nb of votes: ";
+    if (!container->test_if_vote_count_exists())
+        vote_str += "0.";
+    else
+    {
+        // Load and decrypt the number of votes
+        Ciphertext nb_votes = container->load_vote_count();
+        Plaintext nb_votes_decrypted = container->decrypt(nb_votes);
+
+        vote_str += nb_votes_decrypted.to_string() + ".";
+    }
+    nb_votes->setText(vote_str);
 }

@@ -67,6 +67,25 @@ private:
     EvoteApplication *app;
 };
 
+class ButtonPanel : public Wt::WContainerWidget {
+public:
+  ButtonPanel(EvoteApplication *app, Container *container);
+
+private:
+    Wt::WVBoxLayout* layout;
+    Wt::WText* nb_votes;
+    Wt::WText* votes_result;
+    Wt::WPushButton* button_nb_votes;
+    Wt::WPushButton* button_votes;
+
+    void show_votes_result();
+    void show_nb_votes();
+
+    EvoteApplication* app;
+    Container* container;
+};
+
+
 
 
 
