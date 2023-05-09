@@ -4,9 +4,11 @@
 #include <Wt/WApplication.h>
 #include <Wt/WBreak.h>
 #include <Wt/WContainerWidget.h>
+#include <Wt/WGlobal.h>
 #include <Wt/WLineEdit.h>
 #include <Wt/WPushButton.h>
 #include <Wt/WText.h>
+#include <Wt/WVBoxLayout.h>
 
 #include "../BFV/bfv.hh"
 
@@ -26,6 +28,45 @@ private:
     Wt::WText* winner_;
     Container* container;
 };
+
+class LoginPanel : public Wt::WContainerWidget {
+public:
+  LoginPanel(EvoteApplication *app);
+
+private:
+    Wt::WVBoxLayout* layout;
+    Wt::WLineEdit* edit;
+    Wt::WText* loginLabel;
+    Wt::WText* usernameLabel;
+    Wt::WText* passwordLabel;
+    Wt::WLineEdit* loginInput;
+    Wt::WLineEdit* passwordInput;
+    Wt::WPushButton* button;
+    Wt::WText* errorLabel;
+    void submitLoginForm();
+    EvoteApplication *app;
+};
+
+
+class CreatePanel : public Wt::WContainerWidget {
+public:
+  CreatePanel(EvoteApplication *app);
+
+private:
+    Wt::WVBoxLayout* layout;
+    Wt::WLineEdit* edit;
+    Wt::WText* loginLabel;
+    Wt::WText* usernameLabel;
+    Wt::WText* passwordLabel;
+    Wt::WLineEdit* loginInput;
+    Wt::WLineEdit* passwordInput;
+    Wt::WPushButton* button;
+    Wt::WText* errorLabel;
+
+    void create();
+    EvoteApplication *app;
+};
+
 
 
 

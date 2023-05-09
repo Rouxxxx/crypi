@@ -1,4 +1,6 @@
 #include "evote.hh"
+#include <Wt/WString.h>
+#include <Wt/WText.h>
 #include <string>
 
 void EvoteApplication::add_newlines(size_t n)
@@ -51,65 +53,22 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
     , passwordEdit_(nullptr)
     , container(container)
 {
+
+    this->useStyleSheet(CSS_PATH);
     setTitle("Login");
 
-    // Descriptive header
-    root()->addWidget(
-        std::make_unique<Wt::WText>("Enter your credentials to proceed."));
-    add_newlines(2);
+    auto loginPanel = std::make_unique<LoginPanel>(this);
+    root()->addWidget(std::move(loginPanel));
 
-    // Username text area
-    root()->addWidget(std::make_unique<Wt::WText>("Social security number "));
-    socialSecurityNumberEdit_ = root()->addWidget(std::make_unique<Wt::WLineEdit>());
-
-    add_newlines(2);
-
-    // Password text area
-    root()->addWidget(std::make_unique<Wt::WText>("Password "));
-    passwordEdit_ = root()->addWidget(std::make_unique<Wt::WLineEdit>());
-
-    root()->addWidget(std::make_unique<Wt::WBreak>());
-
-    add_newlines(1);
-
-    // Login Button
-    auto login = [this] {
-        if (check_credentials(socialSecurityNumberEdit_->text(), passwordEdit_->text()))
-            VotePage();
-        else
-            connectionError_->setText("Invalid credentials !");
-    };
-    Wt::WPushButton* button_login =
-        root()->addWidget(std::make_unique<Wt::WPushButton>("Login"));
-    add_newlines(2);
-    connectionError_ = root()->addWidget(std::make_unique<Wt::WText>());
-    button_login->clicked().connect(login);
-    add_newlines(2);
+    auto createPanel = std::make_unique<CreatePanel>(this);
+    root()->addWidget(std::move(createPanel));
 
     // Create an account
     root()->addWidget(std::make_unique<Wt::WText>(
-        "To create an account, enter your social security number and a password. Then click on 'Create'."));
-
-    auto create = [this] {
-        if (check_social_number(socialSecurityNumberEdit_->text()))
-        {
-            if (!add_user(socialSecurityNumberEdit_->text(), passwordEdit_->text()))
-                connectionError_->setText("User already exist !");
-            else
-                connectionError_->setText("User Created !");
-        }
-        else
-            connectionError_->setText("Invalid social security number or user "
-                                      "is not 18 years old or older !");
-    };
-    add_newlines(2);
-    Wt::WPushButton* button_create =
-        root()->addWidget(std::make_unique<Wt::WPushButton>("Create"));
-    button_create->clicked().connect(create);
-
-
-
-
+        "To create an account, use the 'Create' panel and use your social security number with a password."));
+    add_newlines(1);
+    root()->addWidget(std::make_unique<Wt::WText>(
+        "If you already have an account, use the 'Login' panel."));
 
     /*
     # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -179,4 +138,116 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
 
     winner_ = root()->addWidget(std::make_unique<Wt::WText>());
     button_votes->clicked().connect(show_winner);
+
+    button_votes->setStyleClass("cool-button");
+    button_nb_votes->setStyleClass("cool-button");
+
+}
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#               Front page
+#               Login panel
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+LoginPanel::LoginPanel(EvoteApplication *app)
+    : app(app)
+{
+    // Set the layout of the container widget to vertical
+    layout = setLayout(std::make_unique<Wt::WVBoxLayout>());
+
+    loginLabel = layout->addWidget(std::make_unique<Wt::WText>("Login"));
+    loginLabel->setStyleClass("label-login");
+
+    usernameLabel = layout->addWidget(std::make_unique<Wt::WText>("Social security number :"));
+    usernameLabel->setStyleClass("login-label-label");
+    loginInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
+    loginInput->setStyleClass("login-label-input");
+
+
+    passwordLabel = layout->addWidget(std::make_unique<Wt::WText>("Password:"));
+    passwordLabel->setStyleClass("login-label-label");
+    passwordInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
+    passwordInput->setEchoMode(Wt::EchoMode::Password);
+    passwordInput->setStyleClass("login-label-input");
+
+    errorLabel = layout->addWidget(std::make_unique<Wt::WText>(""));
+    errorLabel->setStyleClass("label-error");
+
+    button = layout->addWidget(std::make_unique<Wt::WPushButton>("Login"));
+    button->clicked().connect(this, &LoginPanel::submitLoginForm);
+
+    setStyleClass("panel login-panel");
+
+    button->setStyleClass("button-login");
+}
+
+void LoginPanel::submitLoginForm()
+{
+    if (check_credentials(loginInput->text(), passwordInput->text()))
+        app->VotePage();
+    else
+        errorLabel->setText("Invalid credentials !");
+}
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#               Front page
+#          Account create panel
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+CreatePanel::CreatePanel(EvoteApplication *app)
+    : app(app)
+{
+    // Set the layout of the container widget to vertical
+    layout = setLayout(std::make_unique<Wt::WVBoxLayout>());
+
+    loginLabel = layout->addWidget(std::make_unique<Wt::WText>("Create"));
+    loginLabel->setStyleClass("label-login");
+
+    usernameLabel = layout->addWidget(std::make_unique<Wt::WText>("Social security number :"));
+    usernameLabel->setStyleClass("login-label-label");
+    loginInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
+    loginInput->setStyleClass("login-label-input");
+
+
+    passwordLabel = layout->addWidget(std::make_unique<Wt::WText>("Password:"));
+    passwordLabel->setStyleClass("login-label-label");
+    passwordInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
+    passwordInput->setEchoMode(Wt::EchoMode::Password);
+    passwordInput->setStyleClass("login-label-input");
+
+    errorLabel = layout->addWidget(std::make_unique<Wt::WText>(""));
+    errorLabel->setStyleClass("label-error");
+
+    button = layout->addWidget(std::make_unique<Wt::WPushButton>("Create Account"));
+    button->clicked().connect(this, &CreatePanel::create);
+
+    setStyleClass("panel create-panel");
+
+    button->setStyleClass("button-create");
+}
+
+void CreatePanel::create()
+{
+    Wt::WString log = loginInput->text();
+    Wt::WString passw = loginInput->text();
+    if (check_social_number(log))
+    {
+        if (!add_user(log, passw))
+            errorLabel->setText("User already exist !");
+        else
+            errorLabel->setText("User Created !");
+    }
+    else
+        errorLabel->setText("Invalid social security number or user is not 18yo or older !");
+    if (check_credentials(log, passw))
+        app->VotePage();
 }

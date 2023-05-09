@@ -1,0 +1,192 @@
+body {
+  font-family: 'Inter UI', sans-serif;
+  color: #2E475D;
+  text-align: center;
+}
+
+.login-panel {
+  top: 0;
+  right: 0;
+
+  border: 5px solid #7464bc;
+}
+
+.create-panel {
+  top: 0;
+  left: 0;
+  
+  border: 5px solid #43ac29;
+}
+
+.panel {
+  position: absolute;
+  background-color: #ffffff;
+  color: #000000;
+
+  height: auto;
+  width: auto;
+
+  min-height: 50px;
+  min-width: 300px;
+  text-align: left;
+
+  border-radius: 10px;
+  padding: 10px;
+}
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#                 Labels
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+.label-login
+{
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.login-label-label {
+  font-weight: bold;
+  display: block;
+}
+.login-label-input {
+  font-size: 20px;
+  height: 30px;
+}
+input::-moz-focus-inner { 
+  border: 0; 
+}
+
+.label-error
+{
+  text-align: center;
+  color: #ff0000;
+  font-weight: bold;
+}
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#                 Buttons
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+.button-login {
+  position: relative;
+  left: 25%;
+  border: 0;
+  border-radius: 4px;
+  font-weight: 600;
+  padding: 10px 0;
+  box-shadow: 0 0 20px rgba(104, 85, 224, 0.2);
+  transition: 0.4s;
+  color: #6855e0;
+  background-color: #ffffff;
+  border: 1px solid rgba(104, 85, 224, 1);
+  width: 50%;
+}
+
+.button-login:hover {
+  color: white;
+  box-shadow: 0 0 20px rgba(104, 85, 224, 0.6);
+  background-color: #6855e0;
+}
+
+
+.button-create {
+  position: relative;
+  left: 25%;
+  border: 0;
+  border-radius: 4px;
+  font-weight: 600;
+  padding: 10px 0;
+  box-shadow: 0 0 20px rgba(20, 97, 17, 0.2);
+  transition: 0.4s;
+  color: #43ac29;
+  background-color: #ffffff;
+  border: 1px solid rgba(67, 172, 41, 1);
+  width: 50%;
+}
+
+.button-create:hover {
+  color: white;
+  box-shadow: 0 0 20px rgba(34, 97, 39, 0.6);
+  background-color: #43ac29;
+}
+
+
+
+.cool-button {
+  padding: 0.6em 2em;
+  border: none;
+  outline: none;
+  color: rgb(255, 255, 255);
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.cool-button:before {
+  content: "";
+  background: linear-gradient(
+    45deg,
+    #ff0000,
+    #ff7300,
+    #fffb00,
+    #48ff00,
+    #00ffd5,
+    #002bff,
+    #7a00ff,
+    #ff00c8,
+    #ff0000
+  );
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  -webkit-filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing-button-85 20s linear infinite;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+@keyframes glowing-button-85 {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.cool-button:after {
+  z-index: -1;
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #222;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
