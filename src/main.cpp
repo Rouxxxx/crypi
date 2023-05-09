@@ -3,9 +3,9 @@
 #include <vector>
 
 #include "BFV/bfv.hh"
+#include "seal/seal.h"
 #include "utils/utils.hh"
 #include "webserver/webserver.hh"
-#include "seal/seal.h"
 
 using namespace seal;
 
@@ -137,8 +137,8 @@ void vote_example(Container* container, int nb_candidates, int nb_votes)
 
     // Create a vector to check if the operations are accurate.
     std::vector<uint64_t> checker(nb_candidates, 0);
-    for (int i = 0 ; i < nb_votes; i++)
-        for (int j = 0 ; j < nb_candidates; j++)
+    for (int i = 0; i < nb_votes; i++)
+        for (int j = 0; j < nb_candidates; j++)
             checker[j] += votes[i][j];
 
     std::cout << "\nReal vote result:\n";
@@ -158,13 +158,12 @@ void vote_example(Container* container, int nb_candidates, int nb_votes)
     }
 
     std::cout << std::endl;
-    (ok) ? std::cout << "Vectors match\n" : std::cout << "ERROR : Vectors don't match\n";
+    (ok) ? std::cout << "Vectors match\n"
+         : std::cout << "ERROR : Vectors don't match\n";
 }
-
 
 int main(int argc, char** argv)
 {
-    
     if (argc || argv)
     {}
     Infos infos_obj;
@@ -173,7 +172,6 @@ int main(int argc, char** argv)
     infos_obj.build_static_info("src/config.json");
 
     Container container(infos_obj);
-
 
     // Pretty Print
     container.print_parameters();

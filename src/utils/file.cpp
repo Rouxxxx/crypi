@@ -52,8 +52,6 @@ void load_secret_key(SEALContext& context, SecretKey secret_key,
     std::cout << "Secret key imported!\n";
 }
 
-
-
 /*
     Save ciphertext to a specific file
 */
@@ -62,7 +60,6 @@ void save_ciphertext(Ciphertext ciphertext, std::string path)
     // Delete file if already exists
     if (test_if_file_exists(path))
         remove(path.c_str());
-
 
     std::cout << "Saving ciphertext " << path << "...";
 
@@ -73,8 +70,7 @@ void save_ciphertext(Ciphertext ciphertext, std::string path)
     std::cout << "Ciphertext saved!\n";
 }
 
-Ciphertext load_ciphertext(SEALContext& context,
-                     std::string path)
+Ciphertext load_ciphertext(SEALContext& context, std::string path)
 {
     Ciphertext ciphertext;
     if (!test_if_file_exists(path))

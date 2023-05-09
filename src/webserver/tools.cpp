@@ -1,18 +1,22 @@
 #include "tools.hh"
 
-std::string calculate_hash(const std::string username, const std::string password)
+std::string calculate_hash(const std::string username,
+                           const std::string password)
 {
     // Create single string
     std::string combined_str = username + password;
 
     // Calculate hash
     unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()), combined_str.size(), hash);
+    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()),
+           combined_str.size(), hash);
 
     std::stringstream ss;
     // Hex format : FF FF FF FF
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
-        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    {
+        ss << std::hex << std::setw(2) << std::setfill('0')
+           << static_cast<int>(hash[i]);
     }
     std::string hex_hash = ss.str();
 
@@ -23,20 +27,33 @@ std::string calculate_hash(const std::string username, const std::string passwor
 bool check_social_number(const Wt::WString num_secu)
 {
     // Regex for valid social security number
-    std::regex regex_secu(
-        "^(1|2)\\d{2}(0[1-9]|1[0-2])\\d{5}\\d{3}\\d{2}$");
+    std::regex regex_secu("^(1|2)\\d{2}(0[1-9]|1[0-2])\\d{5}\\d{3}\\d{2}$");
     std::smatch match;
     const std::string str = num_secu.toUTF8();
 
     if (!std::regex_match(str, match, regex_secu))
         return false;
 
-    int birth_year = std::stoi(match[1].str());
-    int present_year =
-        std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
-    int minimum_age = present_year - 18;
+    // Extract birth year
+    int birth_year = std::stoi(str.substr(1, 2));
+    int birth_month = std::stoi(str.substr(3, 2));
+    if (birth_year >= 0 && birth_year <= 99)
+        birth_year += (birth_year < 30) ? 2000 : 1900;
 
-    return birth_year <= minimum_age;
+    // Current year
+    auto now = std::chrono::system_clock::now();
+    std::time_t current_time = std::chrono::system_clock::to_time_t(now);
+    std::tm* current_time_tm = std::localtime(&current_time);
+    int current_year = current_time_tm->tm_year + 1900;
+    int current_month = current_time_tm->tm_mon + 1;
+
+    // Calculate age
+    int age = current_year - birth_year;
+    if (birth_month > current_month)
+        age -= 1;
+    std::cout << age << std::endl;
+
+    return age >= 18;
 }
 
 bool check_credentials(const Wt::WString username, const Wt::WString password)
@@ -69,7 +86,6 @@ bool check_credentials(const Wt::WString username, const Wt::WString password)
         file.close();
     }
     return false;
-
 }
 
 std::vector<std::string> get_candidates(std::string path)
@@ -88,7 +104,8 @@ std::vector<std::string> get_candidates(std::string path)
     return v;
 }
 
-void vote(std::string name, std::vector<std::string> candidates, Container *container)
+void vote(std::string name, std::vector<std::string> candidates,
+          Container* container, std::string hash)
 {
     auto it = find(candidates.begin(), candidates.end(), name);
     if (it != candidates.end())
@@ -96,26 +113,28 @@ void vote(std::string name, std::vector<std::string> candidates, Container *cont
     else
         std::cout << "Impossible" << std::endl;
 
+    // Ensure user vote only once
+    std::ofstream out(VOTED_PATH, std::ios::app);
+    out << hash << std::endl;
+
     // Call homomorphic function
-    // See main function
-    // TODO
-    if (!container) {
+    if (!container)
+    {
         std::cout << "No container, can't save Ciphertext." << std::endl;
         return;
     }
-
 
     // Encode the nb which will be added to the counter
     Ciphertext votes_count;
     Ciphertext tmp_nb_votes = encrypt_number(container, 1);
 
-    if (container->test_if_vote_count_exists()) {
+    if (container->test_if_vote_count_exists())
+    {
         votes_count = container->load_vote_count();
         votes_count = container->sum(votes_count, tmp_nb_votes);
     }
     else
         votes_count = tmp_nb_votes;
-
 
     // Encode the vote and add it to the current vector
     int vote_id = it - candidates.begin();
@@ -128,8 +147,8 @@ void vote(std::string name, std::vector<std::string> candidates, Container *cont
     Plaintext votes_vector_txt = container->encode_vector(votes_vector);
     Ciphertext votes_vector_cipher = container->encrypt(votes_vector_txt);
 
-        
-    if (container->test_if_votes_exists()) {
+    if (container->test_if_votes_exists())
+    {
         votes = container->load_votes();
         votes = container->sum(votes, votes_vector_cipher);
     }
@@ -140,70 +159,61 @@ void vote(std::string name, std::vector<std::string> candidates, Container *cont
     container->save_votes(votes);
 }
 
-bool has_voted(const Wt::WString social_security_password, const Wt::WString password)
+bool has_voted(const Wt::WString social_security_password,
+               const Wt::WString password)
 {
-    // return false;
     // Calculate hash
-    std::string hash = calculate_hash(social_security_password.toUTF8(), password.toUTF8());
+    std::string hash =
+        calculate_hash(social_security_password.toUTF8(), password.toUTF8());
 
     // Open user file
     std::fstream file;
     std::string line;
 
     // Check if hash is present in file
-    file.open(USER_PATH);
+    file.open(VOTED_PATH);
     if (file.is_open())
     {
         while (std::getline(file, line))
         {
-            std::vector<std::string> output;
-            std::stringstream ss(line);
-            std::string val;
-            const char separator = ';';
-            std::getline(ss, val, separator);
-            if (hash == val)
-            {
-                std::getline(ss, val, separator);
-                if (val == "1")
-                {
-                    file.close();
-                    return true;
-                }
-                else
-                {
-                    file.close();
-                    return false;
-                }
-            }
+            if (hash == line)
+                return true;
         }
         file.close();
     }
     return false;
 }
 
-
-
-bool add_user(const Wt::WString social_security_password, const Wt::WString password)
+bool check_login(std::string user)
 {
-    // Calculate hash
-    std::string hash = calculate_hash(social_security_password.toUTF8(), password.toUTF8());
+    // Create single string
+    std::string combined_str = user;
 
-    // Open user file
+    // Calculate hash
+    unsigned char hash[SHA256_DIGEST_LENGTH];
+    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()),
+           combined_str.size(), hash);
+
+    std::stringstream ss;
+    // Hex format : FF FF FF FF
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
+    {
+        ss << std::hex << std::setw(2) << std::setfill('0')
+           << static_cast<int>(hash[i]);
+    }
+    std::string hex_hash = ss.str();
+
+    // Open account file
     std::fstream file;
     std::string line;
 
     // Check if hash is present in file
-    file.open(USER_PATH);
+    file.open(ACCOUNT_PATH);
     if (file.is_open())
     {
         while (std::getline(file, line))
         {
-            std::vector<std::string> output;
-            std::stringstream ss(line);
-            std::string val;
-            const char separator = ';';
-            std::getline(ss, val, separator);
-            if (hash == val)
+            if (hex_hash == line)
             {
                 file.close();
                 return false;
@@ -212,8 +222,24 @@ bool add_user(const Wt::WString social_security_password, const Wt::WString pass
         file.close();
     }
 
+    std::ofstream out(ACCOUNT_PATH, std::ios::app);
+    out << hex_hash << std::endl;
+    return true;
+}
+
+bool add_user(const Wt::WString social_security_password,
+              const Wt::WString password)
+{
+    // Check if login has been used.
+    if (!check_login(social_security_password.toUTF8()))
+        return false;
+
+    // Calculate hash
+    std::string hash =
+        calculate_hash(social_security_password.toUTF8(), password.toUTF8());
+
     // Add user in database
     std::ofstream out(USER_PATH, std::ios::app);
-    out << hash << ";0" << std::endl;
+    out << hash << std::endl;
     return true;
 }

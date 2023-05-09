@@ -17,7 +17,8 @@ void EvoteApplication::VotePage()
     setTitle("Vote");
 
     auto headline = root()->addWidget(std::make_unique<Wt::WText>());
-    bool voted = has_voted(socialSecurityNumberEdit_->text(), passwordEdit_->text());
+    bool voted =
+        has_voted(socialSecurityNumberEdit_->text(), passwordEdit_->text());
     if (voted)
         headline->setText("Your vote has been saved !");
     else
@@ -29,7 +30,9 @@ void EvoteApplication::VotePage()
         std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
         auto call_vote = [this](const std::string& candidate,
                                 std::vector<std::string> v) {
-            vote(candidate, v, container);
+            vote(candidate, v, container,
+                 calculate_hash(socialSecurityNumberEdit_->text().toUTF8(),
+                                passwordEdit_->text().toUTF8()));
             VotePage();
         };
 
@@ -47,7 +50,8 @@ void EvoteApplication::VotePage()
 }
 
 // Login page
-EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* container)
+EvoteApplication::EvoteApplication(const Wt::WEnvironment& env,
+                                   Container* container)
     : Wt::WApplication(env)
     , socialSecurityNumberEdit_(nullptr)
     , passwordEdit_(nullptr)
@@ -82,11 +86,11 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
 
     // Show vote count
     auto show_nb_votes = [this, container] {
-
         std::string vote_str = "\tCurrent nb of votes: ";
         if (!container->test_if_vote_count_exists())
             vote_str += "0.";
-        else {
+        else
+        {
             // Load and decrypt the number of votes
             Ciphertext nb_votes = container->load_vote_count();
             Plaintext nb_votes_decrypted = container->decrypt(nb_votes);
@@ -96,15 +100,11 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
         nb_votes_->setText(vote_str);
     };
 
-    Wt::WPushButton* button_nb_votes =
-        root()->addWidget(std::make_unique<Wt::WPushButton>("Show current number of votes"));
+    Wt::WPushButton* button_nb_votes = root()->addWidget(
+        std::make_unique<Wt::WPushButton>("Show current number of votes"));
 
     nb_votes_ = root()->addWidget(std::make_unique<Wt::WText>());
     button_nb_votes->clicked().connect(show_nb_votes);
-
-
-
-
 
     /*
     # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
@@ -119,17 +119,22 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env, Container* conta
         {
             winner_->setText("\tNo votes for now : no winner.");
         }
-        else {
+        else
+        {
             // Load and decrypt the number of votes
             Ciphertext votes_cipher = container->load_votes();
             Plaintext votes_decrypted = container->decrypt(votes_cipher);
-            std::vector<uint64_t> result = container->decode_vector(votes_decrypted);
+            std::vector<uint64_t> result =
+                container->decode_vector(votes_decrypted);
 
             int id_winner = find_max(result);
 
-            std::vector<std::string> candidates = get_candidates(CANDIDATE_PATH);
+            std::vector<std::string> candidates =
+                get_candidates(CANDIDATE_PATH);
 
-            winner_->setText("\tCurrent winner: " + candidates[id_winner] + " with " + std::to_string(result[id_winner]) + " votes.");
+            winner_->setText("\tCurrent winner: " + candidates[id_winner]
+                             + " with " + std::to_string(result[id_winner])
+                             + " votes.");
         }
     };
 

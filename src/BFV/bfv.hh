@@ -51,7 +51,7 @@ private:
     Evaluator evaluator;
     SecretKey secret_key;
     PublicKey public_key;
-    
+
     KeyGenerator keygen;
     Infos infos_struct;
 };
