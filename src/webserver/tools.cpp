@@ -34,26 +34,23 @@ bool check_social_number(const Wt::WString num_secu)
     if (!std::regex_match(str, match, regex_secu))
         return false;
 
-    // Extract birth year and month.
-    int birth_date = std::stoi(str.substr(1, 4));
-    int year = birth_date % 100;
-    int month = birth_date / 100;
+    // Extract birth year
+    int birth_year = std::stoi(str.substr(1, 2));
+    int birth_month = std::stoi(str.substr(3, 2));
+    if (birth_year >= 0 && birth_year <= 99)
+        birth_year += (birth_year < 30) ? 2000 : 1900;
 
-    // Get current date
+    // Current year
     auto now = std::chrono::system_clock::now();
-    time_t now_c = std::chrono::system_clock::to_time_t(now);
-
-    // Convert current date to struct tm
-    struct tm parts
-    {};
-    localtime_r(&now_c, &parts);
-    int currentYear = parts.tm_year + 1900; // years since 1900
-    int currentMonth = parts.tm_mon + 1; // months since January
+    std::time_t current_time = std::chrono::system_clock::to_time_t(now);
+    std::tm* current_time_tm = std::localtime(&current_time);
+    int current_year = current_time_tm->tm_year + 1900;
+    int current_month = current_time_tm->tm_mon + 1;
 
     // Calculate age
-    int age = currentYear - year;
-    if (currentMonth < month)
-        age--;
+    int age = current_year - birth_year;
+    if (birth_month > current_month)
+        age -= 1;
     std::cout << age << std::endl;
 
     return age >= 18;
