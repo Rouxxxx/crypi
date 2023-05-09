@@ -26,8 +26,10 @@ inline int find_max(std::vector<uint64_t> table)
     uint64_t max = table[0];
     int id_max = 0;
 
-    for (size_t id = 1; id < table.size(); id++) {
-        if (table[id] > max) {
+    for (size_t id = 1; id < table.size(); id++)
+    {
+        if (table[id] > max)
+        {
             max = table[id];
             id_max = id;
         }
