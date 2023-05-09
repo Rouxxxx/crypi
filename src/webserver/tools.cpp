@@ -1,5 +1,7 @@
 #include "tools.hh"
 
+
+
 std::string calculate_hash(const std::string username,
                            const std::string password)
 {
@@ -58,7 +60,7 @@ bool check_social_number(const Wt::WString num_secu)
 
 bool check_credentials(const Wt::WString username, const Wt::WString password)
 {
-    // return true;
+    return true;
     // Calculate hash
     std::string hash = calculate_hash(username.toUTF8(), password.toUTF8());
 
@@ -88,32 +90,10 @@ bool check_credentials(const Wt::WString username, const Wt::WString password)
     return false;
 }
 
-std::vector<std::string> get_candidates(std::string path)
-{
-    std::fstream file;
-    std::vector<std::string> v;
-    std::string s;
-
-    file.open(path);
-    if (file.is_open())
-    {
-        while (std::getline(file, s))
-            v.push_back(s);
-        file.close();
-    }
-    return v;
-}
-
-void vote(std::string name, std::vector<std::string> candidates,
+void vote(int vote_id, int nb_candidates,
           Container* container, std::string hash)
 {
-    auto it = find(candidates.begin(), candidates.end(), name);
-    if (it != candidates.end())
-        std::cout << "vote for " << name << " !" << std::endl;
-    else
-        std::cout << "Impossible" << std::endl;
-
-    // Ensure user vote only once
+    // Ensure user votes only once
     std::ofstream out(VOTED_PATH, std::ios::app);
     out << hash << std::endl;
 
@@ -137,8 +117,7 @@ void vote(std::string name, std::vector<std::string> candidates,
         votes_count = tmp_nb_votes;
 
     // Encode the vote and add it to the current vector
-    int vote_id = it - candidates.begin();
-    std::vector<uint64_t> votes_vector(candidates.size());
+    std::vector<uint64_t> votes_vector(nb_candidates);
     votes_vector[vote_id] = 1;
 
     // Encrypt then encode the vector (vector -> plaintext -> encrypted
@@ -162,7 +141,7 @@ void vote(std::string name, std::vector<std::string> candidates,
 bool has_voted(const Wt::WString social_security_password,
                const Wt::WString password)
 {
-    // return false;
+    return false;
     // Calculate hash
     std::string hash =
         calculate_hash(social_security_password.toUTF8(), password.toUTF8());

@@ -41,6 +41,32 @@ bool JsonLib::readUint64(const std::string& key, uint64_t& value) {
     return true;
 }
 
+bool JsonLib::readInt(const std::string& key, int& value) {
+    // Find key in JSON string
+    size_t key_pos = file.find("\"" + key + "\"");
+    if (key_pos == std::string::npos) {
+        std::cerr << "Error: Key \"" << key << "\" not found in JSON file" << std::endl;
+        return false;
+    }
+
+    // Find value of key in JSON string
+    size_t value_pos = file.find(":", key_pos);
+    if (value_pos == std::string::npos) {
+        std::cerr << "Error: Value of key \"" << key << "\" not found in JSON file" << std::endl;
+        return false;
+    }
+
+    // Parse integer value
+    try {
+        value = std::stoi(file.substr(value_pos + 1));
+    } catch (const std::exception& e) {
+        std::cerr << "Error: Unable to parse integer value for key \"" << key << "\" in JSON file" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 
 bool JsonLib::readString(const std::string& key, std::string& value) {
     // Find key in JSON string

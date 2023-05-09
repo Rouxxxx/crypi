@@ -1,4 +1,5 @@
 #include "evote.hh"
+#include "tools.hh"
 #include <Wt/WString.h>
 #include <Wt/WText.h>
 #include <string>
@@ -8,6 +9,12 @@ void EvoteApplication::add_newlines(size_t n)
     for (size_t i = 0; i < n; i++)
         // Newline
         root()->addWidget(std::make_unique<Wt::WBreak>());
+}
+
+void EvoteApplication::call_vote(int vote_id, Wt::WString socialNumber, Wt::WString password)
+{
+    vote(vote_id, candidates.size(), container, calculate_hash(socialNumber.toUTF8(), password.toUTF8()));
+    VotePage(socialNumber, password);
 }
 
 // Vote page
@@ -27,23 +34,12 @@ void EvoteApplication::VotePage(Wt::WString socialNumber, Wt::WString password)
 
         add_newlines(2);
 
-        std::vector<std::string> v = get_candidates(CANDIDATE_PATH);
-        auto call_vote = [this, socialNumber, password](const std::string& candidate,
-                                std::vector<std::string> v) {
-            vote(candidate, v, container,
-                 calculate_hash(socialNumber.toUTF8(),
-                                password.toUTF8()));
-            VotePage(socialNumber, password);
-        };
-
         // Buttons
-        for (size_t i = 0; i < v.size(); i++)
+        for (size_t i = 0; i < candidates.size(); i++)
         {
-            std::string candidate = v[i];
-            Wt::WPushButton* button =
-                root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
-            button->clicked().connect(
-                [call_vote, candidate, v, socialNumber, password]() { call_vote(candidate, v); });
+            std::string candidate = candidates[i].name;
+            Wt::WPushButton* button = root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
+            button->clicked().connect([this, i, socialNumber, password]() { call_vote(i, socialNumber, password); });
             add_newlines(2);
         }
     }
@@ -51,8 +47,9 @@ void EvoteApplication::VotePage(Wt::WString socialNumber, Wt::WString password)
 
 // Login page
 EvoteApplication::EvoteApplication(const Wt::WEnvironment& env,
-                                   Container* container)
+                                   Container* container, std::vector<Candidate> candidates)
     : Wt::WApplication(env)
+    , candidates(candidates)
     , container(container)
 {
 
@@ -112,7 +109,6 @@ LoginPanel::LoginPanel(EvoteApplication *app)
     button->clicked().connect(this, &LoginPanel::submitLoginForm);
 
     setStyleClass("panel login-panel");
-
     button->setStyleClass("button-login");
 }
 
@@ -165,7 +161,6 @@ CreatePanel::CreatePanel(EvoteApplication *app)
     button->clicked().connect(this, &CreatePanel::create);
 
     setStyleClass("panel create-panel");
-
     button->setStyleClass("button-create");
 }
 
@@ -222,7 +217,7 @@ ButtonPanel::ButtonPanel(EvoteApplication* app, Container* container)
 void ButtonPanel::show_votes_result()
 {
     if (!container->test_if_vote_count_exists())
-        votes_result->setText("\tNo votes for now : no winner.");
+        votes_result->setText("No votes for now : <b>no winner</b>.");
     else
     {
         // Load and decrypt the number of votes
@@ -232,26 +227,29 @@ void ButtonPanel::show_votes_result()
 
         int id_winner = find_max(result);
 
-        std::vector<std::string> candidates = get_candidates(CANDIDATE_PATH);
 
-        votes_result->setText("\tCurrent winner: " + candidates[id_winner]
-                    + " with " + std::to_string(result[id_winner])
-                    + " votes.");
-        }
+        std::string result_str = "Current winner: <b>" + app->candidates[id_winner].name
+                    + "</b> with <b>" + std::to_string(result[id_winner])
+                    + "</b> vote";
+        if (result[id_winner] > 1)
+            result_str += "s";
+        result_str += ".";
+        votes_result->setText(result_str);
+    }
 }
 
 void ButtonPanel::show_nb_votes()
 {
-    std::string vote_str = "\tCurrent nb of votes: ";
+    std::string vote_str = "\tCurrent nb of votes: <b>";
     if (!container->test_if_vote_count_exists())
-        vote_str += "0.";
+        vote_str += "0</b>.";
     else
     {
         // Load and decrypt the number of votes
         Ciphertext nb_votes = container->load_vote_count();
         Plaintext nb_votes_decrypted = container->decrypt(nb_votes);
 
-        vote_str += nb_votes_decrypted.to_string() + ".";
+        vote_str += nb_votes_decrypted.to_string() + "</b>.";
     }
     nb_votes->setText(vote_str);
 }

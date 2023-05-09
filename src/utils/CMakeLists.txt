@@ -4,6 +4,7 @@ add_library(utils_lib SHARED
     basics.hh
     jsonLib.cpp
     jsonLib.hh
+    candidates.cpp
 )
 
 target_link_libraries(utils_lib PRIVATE SEAL::seal)

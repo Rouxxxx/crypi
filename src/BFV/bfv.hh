@@ -46,6 +46,7 @@ public:
     bool test_if_votes_exists();
     bool test_if_vote_count_exists();
     SEALContext context;
+    Infos infos_struct;
 
 private:
     Evaluator evaluator;
@@ -53,7 +54,6 @@ private:
     PublicKey public_key;
 
     KeyGenerator keygen;
-    Infos infos_struct;
 };
 
 std::string uint64_to_hex_string(std::uint64_t value);

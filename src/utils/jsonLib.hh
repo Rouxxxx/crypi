@@ -7,6 +7,7 @@ class JsonLib {
 public:
     JsonLib(const std::string& filename);
 
+    bool readInt(const std::string& key, int& value);
     bool readUint64(const std::string& key, uint64_t& value);
     bool readString(const std::string& key, std::string& value);
 

@@ -182,7 +182,10 @@ int main(int argc, char** argv)
 
     // vote_example(&container, 15, 15);
 
-    return Wt::WRun(argc, argv, [&container](const Wt::WEnvironment& env) {
-        return std::make_unique<EvoteApplication>(env, &container);
+    std::vector<Candidate> candidates = get_candidates("data/candidates.txt", 30);
+
+    return Wt::WRun(argc, argv, [&container, candidates](const Wt::WEnvironment& env) {
+        return std::make_unique<EvoteApplication>(env, &container, candidates);
     });
+    return 0;
 }
