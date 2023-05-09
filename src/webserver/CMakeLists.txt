@@ -3,6 +3,7 @@ add_library(web_server SHARED
     evote.hh
     tools.cpp
     tools.hh
+    home_page.cpp
 )
 
 target_link_libraries(web_server PRIVATE SEAL::seal)
