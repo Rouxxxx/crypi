@@ -5,6 +5,52 @@
 #include <Wt/WText.h>
 #include <string>
 
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#               Vote page
+#               Init page
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+void EvoteApplication::call_vote(int vote_id, Wt::WString socialNumber, Wt::WString password)
+{
+    vote(vote_id, candidates.size(), container, calculate_hash(socialNumber.toUTF8(), password.toUTF8()));
+    VotePage(socialNumber, password, vote_id / 5);
+}
+
+void EvoteApplication::VotePage(Wt::WString socialNumber, Wt::WString password, int idPage)
+{
+    root()->clear();
+    setTitle("Vote");
+    auto headline = root()->addWidget(std::make_unique<Wt::WText>());
+
+
+    // Add the home button
+    Wt::WPushButton *button_home = root()->addWidget(std::make_unique<Wt::WPushButton>("Home"));
+    button_home->addStyleClass("button-home button-candidate");
+    button_home->clicked().connect(this, &EvoteApplication::home_page);
+
+
+    // If the user has already voted, don't allow them to do it again
+    bool voted =
+        has_voted(socialNumber, password);
+
+    std::cout << "user has voted ? " << voted << "\n";
+    if (voted) {
+        headline->setText("Your vote has been saved !");
+        return;
+    }
+
+    // Load panels
+    headline->setText("Vote for your favorite candidate !");
+    auto candidatesPanel = std::make_unique<CandidatesPanel>(this, idPage, socialNumber, password);
+    root()->addWidget(std::move(candidatesPanel));
+}
+
+
+
 CandidatesPanel::CandidatesPanel(EvoteApplication *app, int idPage, Wt::WString socialNumber, Wt::WString password)
     : app(app)
 {

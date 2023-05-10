@@ -1,4 +1,31 @@
 #include "home_page.hh"
+#include "evote.hh"
+
+
+void EvoteApplication::home_page()
+{
+    root()->clear();
+    setTitle("Login");
+
+    // Loads all the necessary panels
+    auto loginPanel = std::make_unique<LoginPanel>(this);
+    root()->addWidget(std::move(loginPanel));
+
+    auto createPanel = std::make_unique<CreatePanel>(this);
+    root()->addWidget(std::move(createPanel));
+
+    auto buttonPanel = std::make_unique<ButtonPanel>(this, container);
+    root()->addWidget(std::move(buttonPanel));
+
+
+
+    // Add infos texts
+    root()->addWidget(std::make_unique<Wt::WText>(
+        "To create an account, use the 'Create' panel and use your social security number with a password."));
+    root()->addWidget(std::make_unique<Wt::WBreak>());
+    root()->addWidget(std::make_unique<Wt::WText>(
+        "If you already have an account, use the 'Login' panel."));
+}
 
 /*
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_

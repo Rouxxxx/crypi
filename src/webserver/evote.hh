@@ -50,6 +50,11 @@ public:
     */
     bool skip_social_verif();
 
+    /**
+    Loads the home page
+    */
+    void home_page();
+
     std::vector<Candidate> candidates;
 private:
     Container* container;
