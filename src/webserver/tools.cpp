@@ -168,47 +168,38 @@ bool check_login(std::string username)
     // Create single string
     std::string combined_str = username;
 
-
-
     // Calculate hash
     unsigned char hash[SHA256_DIGEST_LENGTH];
-    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()),
-           combined_str.size(), hash);
-
-
+    SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()), combined_str.size(), hash);
 
     std::stringstream ss;
     // Hex format : FF FF FF FF
-    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++)
-    {
-        ss << std::hex << std::setw(2) << std::setfill('0')
-           << static_cast<int>(hash[i]);
+    for (int i = 0; i < SHA256_DIGEST_LENGTH; i++) {
+        ss << std::hex << std::setw(2) << std::setfill('0') << static_cast<int>(hash[i]);
     }
     std::string hex_hash = ss.str();
-
-
 
     // Open account file
     std::fstream file;
     std::string line;
 
-
-
-    // If the file doesn't exist, no user has been created yet
-    file.open(ACCOUNT_PATH);
-    if (!file.is_open())
-        return false;
-
     // Check if hash is present in file
-    while (std::getline(file, line)) {
-        if (hex_hash == line) {
-            file.close();
-            return false;
+    file.open(ACCOUNT_PATH);
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
+            if (hex_hash == line)
+            {
+                file.close();
+                return false;
+            }
         }
+        file.close();
     }
-    file.close();
-    //std::ofstream out(ACCOUNT_PATH, std::ios::app);
-    //out << hex_hash << std::endl;
+
+    std::ofstream out(ACCOUNT_PATH, std::ios::app);
+    out << hex_hash << std::endl;
     return true;
 }
 
