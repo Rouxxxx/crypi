@@ -3,9 +3,17 @@
 
 #include "evote.hh"
 
+
+/**
+Home page's login panel (in the top right corner)
+*/
 class LoginPanel : public Wt::WContainerWidget {
 public:
-  LoginPanel(EvoteApplication *app);
+    /**
+    Constructs the login panel.
+    @param[in] app The main app (to call its members when a button is clicked)
+    */
+    LoginPanel(EvoteApplication *app);
 
 private:
     Wt::WVBoxLayout* layout;
@@ -17,14 +25,26 @@ private:
     Wt::WLineEdit* passwordInput;
     Wt::WPushButton* button;
     Wt::WText* errorLabel;
-    void submitLoginForm();
+
     EvoteApplication *app;
+
+    /**
+    Tries to login to the platform.
+    */
+    void submitLoginForm();
 };
 
 
+/**
+Home page's account creation panel (in the top left corner)
+*/
 class CreatePanel : public Wt::WContainerWidget {
 public:
-  CreatePanel(EvoteApplication *app);
+    /**
+    Constructs the account creation panel.
+    @param[in] app The main app (to call its members when a button is clicked)
+    */
+    CreatePanel(EvoteApplication *app);
 
 private:
     Wt::WVBoxLayout* layout;
@@ -37,13 +57,25 @@ private:
     Wt::WPushButton* button;
     Wt::WText* errorLabel;
 
+    /**
+    Create the user's account.
+    */
     void create();
     EvoteApplication *app;
 };
 
+/**
+Home page's button panel (in the middle of the screen)
+*/
 class ButtonPanel : public Wt::WContainerWidget {
 public:
-  ButtonPanel(EvoteApplication *app, Container *container);
+
+    /**
+    Constructs the account creation panel.
+    @param[in] app The main app (to call its members when a button is clicked)
+    @param[in] container The program's BFV container (to computer the number of votes / the winner)
+    */
+    ButtonPanel(EvoteApplication *app, Container *container);
 
 private:
     Wt::WVBoxLayout* layout;
@@ -52,11 +84,18 @@ private:
     Wt::WPushButton* button_nb_votes;
     Wt::WPushButton* button_votes;
 
-    void show_votes_result();
-    void show_nb_votes();
-
     EvoteApplication* app;
     Container* container;
+
+    /**
+    Display the current winner.
+    */
+    void show_votes_result();
+
+    /**
+    Display the current number of votes.
+    */
+    void show_nb_votes();
 };
 
 #endif

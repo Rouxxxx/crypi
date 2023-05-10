@@ -136,41 +136,46 @@ void vote(int vote_id, int nb_candidates,
     container->save_votes(votes);
 }
 
-bool has_voted(const Wt::WString social_security_password,
+bool has_voted(const Wt::WString username,
                const Wt::WString password)
 {
     // return false;
     // Calculate hash
     std::string hash =
-        calculate_hash(social_security_password.toUTF8(), password.toUTF8());
+        calculate_hash(username.toUTF8(), password.toUTF8());
 
     // Open user file
     std::fstream file;
     std::string line;
 
-    // Check if hash is present in file
     file.open(VOTED_PATH);
-    if (file.is_open())
-    {
-        while (std::getline(file, line))
-        {
-            if (hash == line)
-                return true;
-        }
-        file.close();
-    }
+
+    // If the file doesn't exist, no user has voted created yet
+    if (!file.is_open())
+        return false;
+
+    // Check if hash is present in file
+    while (std::getline(file, line))
+        if (hash == line)
+            return true;
+
+    file.close();
     return false;
 }
 
-bool check_login(std::string user)
+bool check_login(std::string username)
 {
     // Create single string
-    std::string combined_str = user;
+    std::string combined_str = username;
+
+
 
     // Calculate hash
     unsigned char hash[SHA256_DIGEST_LENGTH];
     SHA256(reinterpret_cast<const unsigned char*>(combined_str.c_str()),
            combined_str.size(), hash);
+
+
 
     std::stringstream ss;
     // Hex format : FF FF FF FF
@@ -181,40 +186,42 @@ bool check_login(std::string user)
     }
     std::string hex_hash = ss.str();
 
+
+
     // Open account file
     std::fstream file;
     std::string line;
 
-    // Check if hash is present in file
-    file.open(ACCOUNT_PATH);
-    if (file.is_open())
-    {
-        while (std::getline(file, line))
-        {
-            if (hex_hash == line)
-            {
-                file.close();
-                return false;
-            }
-        }
-        file.close();
-    }
 
-    std::ofstream out(ACCOUNT_PATH, std::ios::app);
-    out << hex_hash << std::endl;
+
+    // If the file doesn't exist, no user has been created yet
+    file.open(ACCOUNT_PATH);
+    if (!file.is_open())
+        return false;
+
+    // Check if hash is present in file
+    while (std::getline(file, line)) {
+        if (hex_hash == line) {
+            file.close();
+            return false;
+        }
+    }
+    file.close();
+    //std::ofstream out(ACCOUNT_PATH, std::ios::app);
+    //out << hex_hash << std::endl;
     return true;
 }
 
-bool add_user(const Wt::WString social_security_password,
+bool add_user(const Wt::WString username,
               const Wt::WString password)
 {
     // Check if login has been used.
-    if (!check_login(social_security_password.toUTF8()))
+    if (!check_login(username.toUTF8()))
         return false;
 
     // Calculate hash
     std::string hash =
-        calculate_hash(social_security_password.toUTF8(), password.toUTF8());
+        calculate_hash(username.toUTF8(), password.toUTF8());
 
     // Add user in database
     std::ofstream out(USER_PATH, std::ios::app);
