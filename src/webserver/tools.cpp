@@ -72,12 +72,7 @@ bool check_credentials(const Wt::WString username, const Wt::WString password)
     {
         while (std::getline(file, line))
         {
-            std::vector<std::string> output;
-            std::stringstream ss(line);
-            std::string val;
-            const char separator = ';';
-            std::getline(ss, val, separator);
-            if (hash == val)
+            if (hash == line)
             {
                 file.close();
                 return true;

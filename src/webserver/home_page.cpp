@@ -76,7 +76,7 @@ LoginPanel::LoginPanel(EvoteApplication *app)
 void LoginPanel::submitLoginForm()
 {
     Wt::WString log = loginInput->text();
-    Wt::WString passw = loginInput->text();
+    Wt::WString passw = passwordInput->text();
 
     if (check_credentials(log, passw))
         app->VotePage(log, passw);
@@ -139,7 +139,7 @@ void CreatePanel::create()
 {
     // Get the social security number + password entered by the user
     Wt::WString log = loginInput->text();
-    Wt::WString passw = loginInput->text();
+    Wt::WString passw = passwordInput->text();
 
     bool check = app->skip_social_verif();
 
