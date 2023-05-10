@@ -4,9 +4,8 @@
 
 #include "BFV/bfv.hh"
 #include "seal/seal.h"
-#include "utils/basics.hh"
 #include "utils/utils.hh"
-#include "tests/BFV_tests.hh"
+#include "tests/Tester.hh"
 #include "webserver/webserver.hh"
 
 using namespace seal;

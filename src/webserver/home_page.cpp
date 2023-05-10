@@ -13,26 +13,34 @@ LoginPanel::LoginPanel(EvoteApplication *app)
 {
     layout = setLayout(std::make_unique<Wt::WVBoxLayout>());
 
+    // Create the top label
     loginLabel = layout->addWidget(std::make_unique<Wt::WText>("Login"));
     loginLabel->setStyleClass("label-login");
 
+    // Create the login label + textbox
     usernameLabel = layout->addWidget(std::make_unique<Wt::WText>("Social security number :"));
-    usernameLabel->setStyleClass("login-label-label");
     loginInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
     loginInput->setStyleClass("login-label-input");
+    usernameLabel->setStyleClass("login-label-label");
 
 
+    // Create the password label + textbox
     passwordLabel = layout->addWidget(std::make_unique<Wt::WText>("Password:"));
-    passwordLabel->setStyleClass("login-label-label");
     passwordInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
     passwordInput->setEchoMode(Wt::EchoMode::Password);
+    passwordLabel->setStyleClass("login-label-label");
     passwordInput->setStyleClass("login-label-input");
 
+
+    // Create the error label
     errorLabel = layout->addWidget(std::make_unique<Wt::WText>(""));
     errorLabel->setStyleClass("label-error");
 
+
+    // Create the error label
     button = layout->addWidget(std::make_unique<Wt::WPushButton>("Login"));
     button->clicked().connect(this, &LoginPanel::submitLoginForm);
+
 
     setStyleClass("panel login-panel");
     button->setStyleClass("button-login");
@@ -63,32 +71,37 @@ void LoginPanel::submitLoginForm()
 CreatePanel::CreatePanel(EvoteApplication *app)
     : app(app)
 {
-    // Set the layout of the container widget to vertical
     layout = setLayout(std::make_unique<Wt::WVBoxLayout>());
 
+    // Create the top label
     loginLabel = layout->addWidget(std::make_unique<Wt::WText>("Create"));
     loginLabel->setStyleClass("label-login");
 
-    // Create the Login label + textbox
+
+    // Create the login label + textbox
     usernameLabel = layout->addWidget(std::make_unique<Wt::WText>("Social security number :"));
-    usernameLabel->setStyleClass("login-label-label");
     loginInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
     loginInput->setStyleClass("login-label-input");
+    usernameLabel->setStyleClass("login-label-label");
+
 
     // Create the password label + textbox
     passwordLabel = layout->addWidget(std::make_unique<Wt::WText>("Password:"));
-    passwordLabel->setStyleClass("login-label-label");
     passwordInput = layout->addWidget(std::make_unique<Wt::WLineEdit>());
     passwordInput->setEchoMode(Wt::EchoMode::Password);
     passwordInput->setStyleClass("login-label-input");
+    passwordLabel->setStyleClass("login-label-label");
+
 
     // Create the error label
     errorLabel = layout->addWidget(std::make_unique<Wt::WText>(""));
     errorLabel->setStyleClass("label-error");
 
+
     // Create the confirmation button
     button = layout->addWidget(std::make_unique<Wt::WPushButton>("Create Account"));
     button->clicked().connect(this, &CreatePanel::create);
+
 
     setStyleClass("panel create-panel");
     button->setStyleClass("button-create");
@@ -100,6 +113,7 @@ void CreatePanel::create()
     Wt::WString log = loginInput->text();
     Wt::WString passw = loginInput->text();
 
+
     // If the username / password is wrong or already exist, output an error
     bool check = check_social_number(log);
     if (!check) {
@@ -110,6 +124,7 @@ void CreatePanel::create()
         errorLabel->setText("User already exist !");
         return;
     }
+
 
     // If the credentials are good, load the voting page
     if (check_credentials(log, passw))
@@ -134,6 +149,7 @@ ButtonPanel::ButtonPanel(EvoteApplication* app, Container* container)
 {
     setStyleClass("centered-panel");
     layout = setLayout(std::make_unique<Wt::WVBoxLayout>());
+
 
     // Create the button + label which will render the vote's winner
     Wt::WPushButton* button_votes = layout->addWidget(std::make_unique<Wt::WPushButton>("Show winner"));

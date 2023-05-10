@@ -47,6 +47,24 @@ inline int find_max(std::vector<uint64_t> table)
     return id_max;
 }
 
+
+/**
+Cut a double to 3 digits.
+@param[in] val The double value
+@return The cut string
+*/
+inline std::string cut_double(long double &val)
+{
+    std::string dur_str = std::to_string(val);
+    size_t index = dur_str.find(".");
+
+    if (index != std::string::npos && dur_str.length() > index + 4)
+        dur_str = dur_str.substr(0, index + 4);
+
+    return dur_str;
+}
+
+
 class Infos
 {
 public:
@@ -60,6 +78,7 @@ public:
     std::string secret_key_file;
     std::string vote_count_file;
     std::string votes_file;
+    bool skip_social_verif = false;
 
     /**
     Sets the variables.

@@ -1,4 +1,5 @@
-#include "BFV_tests.hh"
+#include "Tester.hh"
+#include <string>
 
 Tester::Tester(std::ostream& stream, Infos infos)
     : stream(stream), infos(infos)
@@ -6,12 +7,34 @@ Tester::Tester(std::ostream& stream, Infos infos)
     execute_test(&Tester::basic_test, "BASIC", "Basic test");
     execute_test(&Tester::simple_test, "BFV", "simple example");
     execute_test(&Tester::real_life_test, "BFV", "real life example");
+
+    int accuracy = (nb_tests / nb_tests_passed) * 100;
+    stream << std::endl;
+
+    std::string str = "[" + std::to_string(nb_tests_passed) + "/" + std::to_string(nb_tests) + "] (" + std::to_string(accuracy) + "%)\n";
+
+    if (accuracy == 100) {
+        print_green("Number of tests passed: ");
+        print_bold_green(str);
+    }
+    else if (accuracy == 0) {
+        print_red("Number of tests passed: ");
+        print_bold_red(str);
+    }
+    else {
+        print_yellow("Number of tests passed: ");
+        print_bold_yellow(str);
+    }
 }
 
 
 
 void Tester::execute_test(bool (Tester::*function_ptr)(), std::string section, std::string test_name)
 {
+    stream << std::endl;
+    print_start(section, test_name);
+    stream << std::endl;
+    // Start a clock before executing the test
     auto start = std::chrono::high_resolution_clock::now();
 
     bool result = (this->*function_ptr)();
@@ -32,16 +55,13 @@ void Tester::execute_test(bool (Tester::*function_ptr)(), std::string section, s
     stream << std::endl;
 }
 
-std::string cut_double(long double &val)
+void Tester::print_start(std::string section, std::string test_name)
 {
-    std::string dur_str = std::to_string(val);
-    size_t index = dur_str.find(".");
-
-    if (index != std::string::npos && dur_str.length() > index + 4)
-        dur_str = dur_str.substr(0, index + 4);
-
-    return dur_str;
+    print_yellow("[" + section + "]");
+    stream << " ";
+    print_bold_yellow(test_name + "...");
 }
+
 
 void Tester::print_good(std::string section, std::string test_name, long double& duration)
 {
@@ -69,25 +89,38 @@ void Tester::print_green(std::string str)
 {
     stream << "\033[32m";
     stream << str;
-    stream << "\033[0m";;
+    stream << "\033[0m";
 }
 void Tester::print_bold_green(std::string str)
 {
     stream << "\033[1;32m";
     stream << str;
-    stream << "\033[0m";;
+    stream << "\033[0m";
 }
 void Tester::print_red(std::string str)
 {
     stream << "\033[31m"; 
     stream << str;
-    stream << "\033[0m";;
+    stream << "\033[0m";
 }
 void Tester::print_bold_red(std::string str)
 {
     stream << "\033[1;31m"; 
     stream << str;
-    stream << "\033[0m";;
+    stream << "\033[0m";
 }
 
 
+void Tester::print_yellow(std::string str)
+{
+    stream << "\033[33m";
+    stream << str;
+    stream << "\033[0m";
+}
+
+void Tester::print_bold_yellow(std::string str)
+{
+    stream << "\033[1;33m";
+    stream << str;
+    stream << "\033[0m";
+}

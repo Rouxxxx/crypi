@@ -1,4 +1,5 @@
-#include "BFV_tests.hh"
+#include "Tester.hh"
+#include <ostream>
 #include <string>
 
 bool Tester::basic_test()
@@ -6,17 +7,17 @@ bool Tester::basic_test()
     return 1;
 }
 
-void print_vector(std::vector<uint64_t> vec, int size)
+void print_vector(std::vector<uint64_t> vec, int size, std::ostream& stream)
 {
     int s = vec.size();
     if (s == 0)
         return;
 
-    std::cout << vec[0];
+    stream << "{" << vec[0];
     for (int i = 1; i < size && i < s; i++)
-        std::cout << " " << vec[i];
+        stream << ", " << vec[i];
 
-    std::cout << std::endl;
+    stream << "}" << std::endl;
 }
 
 
@@ -31,7 +32,7 @@ void print_vector(std::vector<uint64_t> vec, int size)
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
 
-bool simple_example(Container* container)
+bool simple_example(Container* container, std::ostream& stream)
 {
     // Test of the save / import feature
     container->save_secret();
@@ -63,10 +64,10 @@ bool simple_example(Container* container)
     std::string hex_m_dec = mult_decrypted.to_string();
 
     // Print to see if everything's right
-    std::cout << "x:" << x1 << ", y:" << y1 << "\n";
-    std::cout << "addition: " << hex_s
+    stream << "x:" << x1 << ", y:" << y1 << "\n";
+    stream << "addition: " << hex_s
               << ", decrypted addition: " << hex_s_dec << "\n";
-    std::cout << "multiplication: " << hex_m
+    stream << "multiplication: " << hex_m
               << ", decrypted multiplication: " << hex_m_dec
               << "\n";
 
@@ -78,7 +79,7 @@ bool Tester::simple_test()
     Container container(infos);
     container.init_public_key();
     container.init_secret_key();
-    return simple_example(&container);
+    return simple_example(&container, stream);
 }
 
 
@@ -106,7 +107,7 @@ std::vector<uint64_t> generate_random_vector(int n)
 // Loop and generate n random votes for x candidates
 // We keep track of the list of votes in a vector, so we can check if the result
 // is accurate
-bool vote_example(Container* container, int nb_candidates, int nb_votes)
+bool vote_example(Container* container, int nb_candidates, int nb_votes, std::ostream& stream)
 {
     // Seed so the random is efficient
     srand(time(NULL));
@@ -152,17 +153,17 @@ bool vote_example(Container* container, int nb_candidates, int nb_votes)
 
     // Printing results
     int nb_votes_decrypted_int = hex_to_int(nb_votes_decrypted.to_string());
-    std::cout << "Nb votes decrypted: " << nb_votes_decrypted_int
+    stream << "Nb votes decrypted: " << nb_votes_decrypted_int
               << std::endl;
 
     if (nb_votes_decrypted_int != nb_votes) {
-        std::cout << "ERROR: vote numbers don't match (actual number: " << nb_votes << ")";
+        stream << "ERROR: vote numbers don't match (actual number: " << nb_votes << ")";
         return false;
     }
     else
-        std::cout << "Nb votes is good !\n";
+        stream << "Nb votes is good !\n";
 
-    std::cout << "\nVotes:\n";
+    stream << "\nVotes:\n";
 
     // Create a vector to check if the operations are accurate.
     std::vector<uint64_t> checker(nb_candidates, 0);
@@ -170,11 +171,11 @@ bool vote_example(Container* container, int nb_candidates, int nb_votes)
         for (int j = 0; j < nb_candidates; j++)
             checker[j] += votes[i][j];
 
-    std::cout << "Real vote result:\n";
-    print_vector(checker, nb_candidates);
+    stream << "Real vote result:\n";
+    print_vector(checker, nb_candidates, stream);
 
-    std::cout << "Result computed:\n";
-    print_vector(result, nb_candidates);
+    stream << "Result computed:\n";
+    print_vector(result, nb_candidates, stream);
 
     bool ok = true;
     for (int id = 0; id < nb_candidates; id++)
@@ -186,8 +187,8 @@ bool vote_example(Container* container, int nb_candidates, int nb_votes)
         }
     }
 
-    (ok) ? std::cout << "Vectors match\n"
-         : std::cout << "ERROR : Vectors don't match\n";
+    (ok) ? stream << "Vectors match\n"
+         : stream << "ERROR : Vectors don't match\n";
     return ok;
 }
 
@@ -197,7 +198,7 @@ bool Tester::real_life_test()
     container.init_public_key();
     container.init_secret_key();
 
-    return vote_example(&container, 6, 10000);
+    return vote_example(&container, 6, 100, stream);
 }
 
 
