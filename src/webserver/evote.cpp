@@ -14,7 +14,7 @@ void EvoteApplication::add_newlines(size_t n)
 void EvoteApplication::call_vote(int vote_id, Wt::WString socialNumber, Wt::WString password)
 {
     vote(vote_id, candidates.size(), container, calculate_hash(socialNumber.toUTF8(), password.toUTF8()));
-    VotePage(socialNumber, password, 0);
+    VotePage(socialNumber, password, vote_id / 5);
 }
 
 // Vote page
