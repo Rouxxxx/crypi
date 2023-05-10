@@ -44,6 +44,12 @@ public:
     */
     void call_vote(int id, Wt::WString socialNumber, Wt::WString password);
 
+    /**
+    Check if the container info struct skip_social_verif's value.
+    @return True if skip_social_verif is true, False otherwise
+    */
+    bool skip_social_verif();
+
     std::vector<Candidate> candidates;
 private:
     Container* container;

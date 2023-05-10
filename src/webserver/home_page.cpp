@@ -50,6 +50,7 @@ void LoginPanel::submitLoginForm()
 {
     Wt::WString log = loginInput->text();
     Wt::WString passw = loginInput->text();
+
     if (check_credentials(log, passw))
         app->VotePage(log, passw);
     else
@@ -113,9 +114,11 @@ void CreatePanel::create()
     Wt::WString log = loginInput->text();
     Wt::WString passw = loginInput->text();
 
+    bool check = app->skip_social_verif();
 
     // If the username / password is wrong or already exist, output an error
-    bool check = check_social_number(log);
+    if (!check)
+        check = check_social_number(log);
     if (!check) {
         errorLabel->setText("Invalid social security number or user is not 18yo or older !");
         return;

@@ -78,7 +78,7 @@ public:
     std::string secret_key_file;
     std::string vote_count_file;
     std::string votes_file;
-    bool skip_social_verif = false;
+    bool skip_social_verif;
 
     /**
     Sets the variables.
@@ -96,6 +96,8 @@ public:
 
         json.readString("vote_count_file", vote_count_file);
         json.readString("votes_file", votes_file);
+
+        skip_social_verif = false;
     }
 };
 

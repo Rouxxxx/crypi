@@ -4,6 +4,10 @@
 #include "home_page.hh"
 #include "vote_page.hh"
 
+bool EvoteApplication::skip_social_verif() {
+    return container->infos_struct.skip_social_verif;
+}
+
 void EvoteApplication::call_vote(int vote_id, Wt::WString socialNumber, Wt::WString password)
 {
     vote(vote_id, candidates.size(), container, calculate_hash(socialNumber.toUTF8(), password.toUTF8()));
@@ -54,8 +58,6 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env,
     // Imports the CSS
     this->useStyleSheet(CSS_PATH);
     setTitle("Login");
-
-
 
     // Loads all the necessary panels
     auto loginPanel = std::make_unique<LoginPanel>(this);

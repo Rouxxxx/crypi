@@ -10,27 +10,41 @@
 
 ## Commands
 
-To build:
+Build the project:
 
 ```bash
 cmake .
 make
 ```
 
-To run the server:
+Clean the project:
 
 ```bash
-./src/e_voting --docroot . --http-address 0.0.0.0 --http-port 9090
+python3 clean.py
 ```
 
-To run the tests:
+Run the app:
+
+```bash
+./src/e_voting
+```
+
+### Run options
+
+- Testsuite
 
 ```bash
 ./src/e_voting --check
 ```
 
-To clean:
+- Server run
 
 ```bash
-python3 clean.py
+./src/e_voting --docroot . --http-address <ip> --http-port <server>
+```
+
+- Disable social security number checking
+
+```bash
+./src/e_voting [...] --skip-social-verif
 ```
