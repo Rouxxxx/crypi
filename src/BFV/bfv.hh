@@ -9,11 +9,12 @@
 
 using namespace seal;
 
+/**
+Class to store our BFV structure.
+*/
 class Container
 {
-    /**
-    Class to store our BFV structure.
-    */
+
 public:
     /**
     Constructs the Container using an info struct, to keep track of the important files.
@@ -102,14 +103,14 @@ public:
 
     /**
     Encode a vector into a plaintext (vector -> plaintext)
-    Returns the computed plaintext
     @param[in] vote the current vector
+    @return The computed plaintext
     */
     Plaintext encode_vector(std::vector<uint64_t> vote);
     /**
     Decodes a plaintext into a vector (plaintext -> vector)
-    Returns our previously encoded vector
     @param[in] vector_decrypted The plaintext
+    @return The previously encoded vector
     */
     std::vector<uint64_t> decode_vector(Plaintext vector_decrypted);
 
@@ -130,22 +131,27 @@ public:
     /**
     Load encrypted ciphertext from a specific file
     @param[in] path The file containing the ciphertext
+    @return The saved plaintext
     */
     Ciphertext load_cipher(std::string path);
     /**
     Load votes thanks to the path contained in the JSON file
+    @return The saved plaintext
     */
     Ciphertext load_votes();
     /**
     Load votes count thanks to the path contained in the JSON file
+    @return The saved plaintext
     */
     Ciphertext load_vote_count();
     /**
     Test if the vote file exists before loading them
+    @return True if it exists / False otherwise
     */
     bool test_if_votes_exists();
     /**
     Test if the vote count file exists before loading them
+    @return True if it exists / False otherwise
     */
     bool test_if_vote_count_exists();
     SEALContext context;

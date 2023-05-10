@@ -4,9 +4,15 @@
 #include "basics.hh"
 #include "file.hh"
 
-class Candidate
-{
-  public:
+/**
+Website's candidate
+*/
+class Candidate {
+public:
+    /**
+    @param[in] image The image ID in the folder data/images
+    @param[in] name The candidate name
+    */
     Candidate(int image, std::string name)
       : image(image), name(name) {}
     int image;

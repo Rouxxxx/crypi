@@ -10,6 +10,10 @@
 
 #include "jsonLib.hh"
 
+/**
+    Converts a hex string to an int
+    @param[in] hexString The hex string to be converted
+*/
 inline int hex_to_int(std::string hexString)
 {
     int intValue;
@@ -20,6 +24,10 @@ inline int hex_to_int(std::string hexString)
     return intValue;
 }
 
+/**
+    Finds the id in a vector, corresponding to its max value
+    @param[in] table The vector where to find the max 
+*/
 inline int find_max(std::vector<uint64_t> table)
 {
     if (table.size() == 0)
@@ -36,21 +44,27 @@ inline int find_max(std::vector<uint64_t> table)
             id_max = id;
         }
     }
-
     return id_max;
 }
-
-#include <iostream>
 
 class Infos
 {
 public:
+    /**
+    Class to store our programs basic infos (paths, modulus_degress).
+    @see JsonLib to know how the JSON file is read
+    */
     size_t poly_modulus_degree;
     int nb_candidates;
     std::string data_folder;
     std::string secret_key_file;
     std::string vote_count_file;
     std::string votes_file;
+
+    /**
+    Sets the variables.
+    @param[in] path The path of the JSON file
+    */
     void build_static_info(std::string path)
     {
         JsonLib json(path);
