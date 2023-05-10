@@ -124,6 +124,7 @@ input::-moz-focus-inner {
 #
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
+
 .create-panel {
   top: 0;
   left: 0;
@@ -199,7 +200,7 @@ input::-moz-focus-inner {
 .label-votes
 {
   position: absolute;
-  transform: translateX(-50%) translateY(700%);
+  transform: translateX(-48%) translateY(700%);
   width:400px;
 }
 .label-nb-votes
@@ -207,6 +208,13 @@ input::-moz-focus-inner {
   position: absolute;
   transform: translateX(63%) translateY(700%);
   width:300px;
+}
+
+.image-winner
+{
+  position: absolute;
+  transform: translateY(130%);
+  left: 31%;
 }
 
 

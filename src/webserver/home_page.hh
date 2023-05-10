@@ -3,7 +3,6 @@
 
 #include "evote.hh"
 
-
 /**
 Home page's login panel (in the top right corner)
 */
@@ -83,6 +82,7 @@ private:
     Wt::WText* votes_result;
     Wt::WPushButton* button_nb_votes;
     Wt::WPushButton* button_votes;
+    Wt::WImage* image = nullptr;
 
     EvoteApplication* app;
     Container* container;

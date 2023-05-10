@@ -59,7 +59,6 @@ CandidatesPanel::CandidatesPanel(EvoteApplication *app, int idPage, Wt::WString 
 
         // Set the candidate's image
         std::string imagePath = "data/images/" + std::to_string(imageID) + ".jpg";
-        std::string classStr = "image image-" + std::to_string(id - idPage * 5);
         Wt::WImage* image = imageContainer->addWidget(std::make_unique<Wt::WImage>(imagePath));
         image->setStyleClass("image");
 

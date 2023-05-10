@@ -195,6 +195,17 @@ void ButtonPanel::show_votes_result()
         result_str += "s";
     result_str += ".";
     votes_result->setText(result_str);
+
+
+    // If user already clicked on the button, reset the image of the winner
+    if (image)
+        layout->removeWidget(image);
+
+
+    // Find the winner's image and display it
+    std::string imagePath = "data/images/" + std::to_string(app->candidates[id_winner].image) + ".jpg";
+    image = layout->addWidget(std::make_unique<Wt::WImage>(imagePath));
+    image->setStyleClass("image image-winner");
 }
 
 void ButtonPanel::show_nb_votes()
