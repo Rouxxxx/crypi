@@ -196,7 +196,8 @@ bool Tester::real_life_test()
     Container container(infos);
     container.init_public_key();
     container.init_secret_key();
-    return vote_example(&container, 30, 100);
+
+    return vote_example(&container, 6, 10000);
 }
 
 
