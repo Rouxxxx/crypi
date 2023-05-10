@@ -4,6 +4,7 @@ add_library(web_server SHARED
     tools.cpp
     tools.hh
     home_page.cpp
+    vote_page.cpp
 )
 
 target_link_libraries(web_server PRIVATE SEAL::seal)

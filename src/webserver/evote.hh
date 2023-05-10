@@ -21,8 +21,8 @@ public:
     void add_newlines(size_t n);
     void VotePage(Wt::WString socialNumber, Wt::WString password, int idPage);
     std::vector<Candidate> candidates;
-private:
     void call_vote(int id, Wt::WString socialNumber, Wt::WString password);
+private:
     Container* container;
 };
 

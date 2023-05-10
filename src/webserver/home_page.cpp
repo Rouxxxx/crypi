@@ -124,7 +124,7 @@ ButtonPanel::ButtonPanel(EvoteApplication* app, Container* container)
     : app(app)
     , container(container)
 {
-    setStyleClass("button-panel");
+    setStyleClass("centered-panel");
 
     layout = setLayout(std::make_unique<Wt::WVBoxLayout>());
     Wt::WPushButton* button_votes = layout->addWidget(std::make_unique<Wt::WPushButton>("Show winner"));

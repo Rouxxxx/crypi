@@ -7,31 +7,28 @@ body {
 /*
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 #
-#                 Panels
+#                 General
 #
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
 
-.button-panel {
+button{
+  font-weight: 600;
+}
+
+.centered-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   position: absolute;
-  top: 800%;
+  top: 600%;
   left: 50%;
   transform: translateX(-50%);
+  width: 1500px;
 
   text-align: center;
   margin-top: 20px;
-}
-
-.login-panel {
-  top: 0;
-  right: 0;
-  border: 5px solid #7464bc;
-}
-
-.create-panel {
-  top: 0;
-  left: 0;
-  border: 5px solid #43ac29;
 }
 
 .panel {
@@ -50,30 +47,6 @@ body {
   padding: 10px;
 }
 
-
-/*
-# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-#
-#                 Labels
-#
-# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
-*/
-
-.label-login
-{
-  font-size: 30px;
-  font-weight: bold;
-  text-align: center;
-}
-
-.login-label-label {
-  font-weight: bold;
-  display: block;
-}
-.login-label-input {
-  font-size: 20px;
-  height: 30px;
-}
 input::-moz-focus-inner { 
   border: 0; 
 }
@@ -85,18 +58,6 @@ input::-moz-focus-inner {
   font-weight: bold;
 }
 
-.label-votes
-{
-  position: absolute;
-  transform: translateX(-95%) translateY(700%);
-  width:300px;
-}
-.label-nb-votes
-{
-  position: absolute;
-  transform: translateY(700%);
-  width:300px;
-}
 
 
 
@@ -104,16 +65,17 @@ input::-moz-focus-inner {
 /*
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 #
-#                 Buttons
+#              Main page
+#                Login
 #
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
 
-
-button{
-  font-weight: 600;
+.login-panel {
+  top: 0;
+  right: 0;
+  border: 5px solid #7464bc;
 }
-
 
 .button-login {
   position: relative;
@@ -132,6 +94,40 @@ button{
   color: white;
   box-shadow: 0 0 20px rgba(104, 85, 224, 0.6);
   background-color: #6855e0;
+}
+
+.label-login
+{
+  font-size: 30px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.login-label-label {
+  font-weight: bold;
+  display: block;
+}
+.login-label-input {
+  font-size: 20px;
+  height: 30px;
+}
+
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#              Home page
+#           Account creation
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+.create-panel {
+  top: 0;
+  left: 0;
+  border: 5px solid #43ac29;
 }
 
 
@@ -158,10 +154,20 @@ button{
 
 
 
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#              Home page
+#            Result buttons
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
 .glow-button {
   position: absolute;
   display: inline-block;
-  font-size: large;
+  top:80%;
 	width: 200px;
 	height: 100px;
 	cursor: pointer;
@@ -177,16 +183,221 @@ button{
 
 .button-nb-votes
 {
-  left:300%;
+  left:56%;
 }
 
 .button-votes
 {
-  right:200%;
+  right:56%;
 }
 
 @keyframes hue {
 	to {
 		filter: hue-rotate(1turn);
 	}
+}
+
+.label-votes
+{
+  position: absolute;
+  transform: translateX(-50%) translateY(700%);
+  width:400px;
+}
+.label-nb-votes
+{
+  position: absolute;
+  transform: translateX(63%) translateY(700%);
+  width:300px;
+}
+
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#              Voting page
+#                Images
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+.image-container {
+  display: flex;
+  justify-content: space-between;
+
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 10px;
+  width: 100%
+}
+.image
+{
+  border-radius: 10%;
+  width: 200px;
+  height: 200px;
+}
+
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#              Voting page
+#                Labels
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+.text-container {
+  display: flex;
+  justify-content: space-between;
+
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 10px;
+  width: 100%;
+}
+.text-candidate
+{
+  width: 200px;
+  font-weight: bold;
+}
+
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#              Voting page
+#                Buttons
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+
+  align-items: center;
+  flex-wrap: wrap;
+  width: 98%;
+}
+
+.button-candidate {
+
+  display: inline-block;
+  outline: none;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  border-radius: 500px;
+  transition-property: background-color,border-color,color,box-shadow,filter;
+  transition-duration: .3s;
+  border: 1px solid transparent;
+  letter-spacing: 2px;
+  min-width: 160px;
+  text-transform: uppercase;
+  white-space: normal;
+  font-weight: 700;
+  text-align: center;
+  padding: 16px 14px 18px;
+  background-color: transparent;
+  height: 48px;
+}
+
+.button-candidate:hover
+{
+  color: #fff;
+  background-color: #616467;
+}
+
+.button-0 {
+  box-shadow: inset 0 0 0 2px #006400;
+  color: #006400
+}
+.button-0:hover {
+  background-color: #006400;
+}
+
+.button-1 {
+  box-shadow: inset 0 0 0 2px #4169E1;
+  color: #4169E1
+}
+.button-1:hover {
+  background-color: #4169E1;
+}
+
+.button-2 {
+  box-shadow: inset 0 0 0 2px #FF7F50;
+  color: #FF7F50
+}
+.button-2:hover {
+  background-color: #FF7F50;
+}
+
+.button-3 {
+  box-shadow: inset 0 0 0 2px #4B0082;
+  color: #4B0082
+}
+.button-3:hover {
+  background-color: #4B0082;
+}
+
+.button-4 {
+  box-shadow: inset 0 0 0 2px #FFD700;
+  color: #FFD700
+}
+.button-4:hover {
+  background-color: #FFD700;
+}
+
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#              Voting page
+#            Next / Previous
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+.page-text {
+  position: absolute;
+  top: -10%;
+}
+
+.swipe-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-before,
+.button-after {
+  width: 150px;
+  height: 40px;
+  background-color: transparent;
+
+  font-size: 1.4em;
+  font-weight: 600;
+
+
+  border-width: 5px;
+  border-image: linear-gradient(135deg, #008aff, #86d472) 1;
+  cursor: pointer;
+  transition: all 0.4s ease;
+}
+.button-before:hover,
+.button-after:hover {
+  background-image: linear-gradient(135deg, #008aff, #86d472);
+  color: #fff;
+  border-image: linear-gradient(135deg, #008aff, #86d472) 1;
 }

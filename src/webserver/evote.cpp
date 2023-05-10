@@ -2,6 +2,7 @@
 #include "tools.hh"
 
 #include "home_page.hh"
+#include "vote_page.hh"
 
 void EvoteApplication::add_newlines(size_t n)
 {
@@ -31,17 +32,8 @@ void EvoteApplication::VotePage(Wt::WString socialNumber, Wt::WString password, 
     {
         headline->setText("Vote for your favorite candidate !");
 
-        add_newlines(2);
-
-        // Buttons
-        int candidates_size = candidates.size();
-        for (int i = 0 + (idPage * 5); i < candidates_size && i < (idPage + 1) * 5; i++)
-        {
-            std::string candidate = candidates[i].name;
-            Wt::WPushButton* button = root()->addWidget(std::make_unique<Wt::WPushButton>(candidate));
-            button->clicked().connect([this, i, socialNumber, password]() { call_vote(i, socialNumber, password); });
-            add_newlines(2);
-        }
+        auto candidatesPanel = std::make_unique<CandidatesPanel>(this, idPage, socialNumber, password);
+        root()->addWidget(std::move(candidatesPanel));
     }
 }
 
@@ -61,6 +53,9 @@ EvoteApplication::EvoteApplication(const Wt::WEnvironment& env,
 
     this->useStyleSheet(CSS_PATH);
     setTitle("Login");
+
+    //VotePage("a", "a", 0);
+    //return;
 
     auto loginPanel = std::make_unique<LoginPanel>(this);
     root()->addWidget(std::move(loginPanel));
