@@ -46,7 +46,6 @@ class Infos
 {
 public:
     size_t poly_modulus_degree;
-    uint64_t plain_modulus;
     int nb_candidates;
     std::string data_folder;
     std::string secret_key_file;
@@ -58,7 +57,6 @@ public:
 
         json.readInt("nb_candidates", nb_candidates);
         json.readUint64("poly_modulus_degree", poly_modulus_degree);
-        json.readUint64("plain_modulus", plain_modulus);
 
         json.readString("data_folder", data_folder);
         json.readString("secret_key_file", secret_key_file);

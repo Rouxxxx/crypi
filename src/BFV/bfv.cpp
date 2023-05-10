@@ -19,9 +19,10 @@ SEALContext set_context(Infos infos)
     parms.set_poly_modulus_degree(infos.poly_modulus_degree);
     parms.set_coeff_modulus(
         CoeffModulus::BFVDefault(infos.poly_modulus_degree));
-    // parms.set_plain_modulus(infos.plain_modulus);
+
+    // Batching enabled for vector encryption
     parms.set_plain_modulus(PlainModulus::Batching(infos.poly_modulus_degree,
-                                                   20)); // Batching enabled
+                                                   20)); 
 
     return SEALContext(parms);
 }
@@ -34,6 +35,7 @@ Container::Container(Infos infos)
 {
     infos_struct = infos;
 
+    // At startup, remove votes / votes count files if they exist (fresh new startup)
     std::string path = infos_struct.votes_file;
     if (test_if_file_exists(path))
         remove(path.c_str());
@@ -80,10 +82,15 @@ void Container::load_secret(std::string path)
     load_secret_key(context, secret_key, path);
 }
 
+
+
+
+
 /*
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 #
 #             Operations
+#             Encryption
 #
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
@@ -101,6 +108,19 @@ Ciphertext Container::encrypt(std::string str)
     return encrypt(Plaintext(str));
 }
 
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#             Operations
+#             Decryption
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
+
 Plaintext Container::decrypt(Ciphertext x_encrypted)
 {
     Plaintext x_decrypted;
@@ -110,6 +130,19 @@ Plaintext Container::decrypt(Ciphertext x_encrypted)
 
     return x_decrypted;
 }
+
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#             Operations
+#            Sum and mult
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
 
 Ciphertext Container::sum(Ciphertext encrypted1, Ciphertext encrypted2)
 {
@@ -127,6 +160,19 @@ Ciphertext Container::multiply(Ciphertext encrypted1, Ciphertext encrypted2)
 
     return res;
 }
+
+
+
+
+
+/*
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+#
+#             Operations
+#          Vector switching
+#
+# _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+*/
 
 Plaintext Container::encode_vector(std::vector<uint64_t> vote)
 {
@@ -151,10 +197,14 @@ Ciphertext encrypt_number(Container* container, std::uint64_t value)
     return value_encrypted;
 }
 
+
+
+
+
 /*
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 #
-#               Other
+#               Others
 #
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
 */
@@ -199,6 +249,10 @@ void Container::print_parameters()
 
     std::cout << "\\" << std::endl;
 }
+
+
+
+
 
 /*
 # _-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
