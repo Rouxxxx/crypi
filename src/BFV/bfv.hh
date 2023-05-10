@@ -13,12 +13,6 @@ class Container
 {
     /**
     Class to store our BFV structure.
-
-    @par Memory Management
-
-    @par Thread Safety
-
-    @see Plaintext for the class that stores plaintexts.
     */
 public:
     /**
@@ -37,13 +31,22 @@ public:
 
 
     /**
-    Saves/Load the secret key.
-    @param[in] path If we want a specific path not mentionned in the JSON file loaded, use this one instead
+    Saves the secret key.
     */
     void save_secret();
+    /**
+    Saves the secret key.
+    @param[in] path If we want a specific path not mentionned in the JSON file loaded, use this one instead
+    */
     void save_secret(std::string path);
-
+    /**
+    Loads the secret key.
+    */
     void load_secret();
+    /**
+    Loads the secret key.
+    @param[in] path If we want a specific path not mentionned in the JSON file loaded, use this one instead
+    */
     void load_secret(std::string path);
 
 
@@ -56,30 +59,43 @@ public:
 
 
     /**
-    Encrypts a message with our public key. Returns the computed Ciphertext
+    Encrypts a message with our public key.
     @param[in] str A basic string, which will be converted into a Plaintext before encryption
-    @param[in] plain The plaintext we want to encrypt
+    @return The computed Ciphertext
     */
     Ciphertext encrypt(std::string str);
+    /**
+    Encrypts a message with our public key.
+    @param[in] plain The plaintext we want to encrypt
+    @return The computed Ciphertext
+    */
     Ciphertext encrypt(Plaintext plain);
     
 
 
     /**
-    Decrypts a message with our secret key. Returns the computed Plaintext
+    Decrypts a message with our secret key.
     @param[in] x_encrypted The encrypted Ciphertext
+    @return The computed Plaintext
     */
     Plaintext decrypt(Ciphertext x_encrypted);
 
 
 
     /**
-    Computes the desired homomorphic operations (x1 + x2) and (x1 * x2).
+    Computes the desired homomorphic operations (x1 + x2).
+    @param[in] encrypted1 The first encrypted Ciphertext (x1)
+    @param[in] encrypted2 The first encrypted Ciphertext (x2)
+    @return x1 + x2
+    */
+    Ciphertext sum(Ciphertext encrypted1, Ciphertext encrypted2);
+    /**
+    Computes the desired homomorphic operations (x1 * x2).
     Returns the computed sum / multiple
     @param[in] encrypted1 The first encrypted Ciphertext (x1)
     @param[in] encrypted2 The first encrypted Ciphertext (x2)
+    @return x1 * x2
     */
-    Ciphertext sum(Ciphertext encrypted1, Ciphertext encrypted2);
     Ciphertext multiply(Ciphertext encrypted1, Ciphertext encrypted2);
 
 
@@ -117,14 +133,20 @@ public:
     */
     Ciphertext load_cipher(std::string path);
     /**
-    Load votes and votes count thanks to the path contained in the JSON file
+    Load votes thanks to the path contained in the JSON file
     */
     Ciphertext load_votes();
+    /**
+    Load votes count thanks to the path contained in the JSON file
+    */
     Ciphertext load_vote_count();
     /**
-    Test if the previous files exists before loading them
+    Test if the vote file exists before loading them
     */
     bool test_if_votes_exists();
+    /**
+    Test if the vote count file exists before loading them
+    */
     bool test_if_vote_count_exists();
     SEALContext context;
 
